@@ -10,6 +10,7 @@ import {
   Dimensions,
   TouchableOpacity,
 } from "react-native";
+import Icon from "react-native-vector-icons/FontAwesome"; // Import FontAwesome icon
 
 const { width, height } = Dimensions.get("window");
 
@@ -45,18 +46,35 @@ const Onboarding = ({ onComplete }) => {
         image: require("../../assets/onboarding/onboarding1.png"),
         title: "Welcome!",
         description: "The Ultimate Guide for Cooking Enthusiasts. Discover your creativity in the kitchen with us and embark on a journey full of flavors!",
+        icon: "home" // FontAwesome icon name
     },
     {
         image: require("../../assets/onboarding/onboarding2.png"),
         title: "Discover Recipes",
         description: "Find what you're looking for among thousands of delicious recipes. Whether it's breakfast, lunch, or dinner, there's something for every taste here!",
+        icon: "cutlery" // FontAwesome icon name
     },
     {
         image: require("../../assets/onboarding/onboarding3.png"),
-        title: "Step-by-Step Instructions",
+        title: "Step-by-Step",
         description: "Each recipe is explained step by step, making cooking easier than ever. Ideal for beginners to experts alike!",
+        icon: "list-alt" // FontAwesome icon name
     },
   ];
+
+  const renderPageIndicator = () => (
+    <View style={styles.pageIndicatorContainer}>
+      {slides.map((_, index) => (
+        <View
+          key={index}
+          style={[
+            styles.pageIndicator,
+            index === currentScreen && styles.currentPageIndicator,
+          ]}
+        />
+      ))}
+    </View>
+  );
 
   return (
     <View style={styles.container}>
@@ -85,9 +103,13 @@ const Onboarding = ({ onComplete }) => {
                   </TouchableOpacity>
                 )}
                 <View style={styles.textContainer}>
-                  <Text style={styles.title}>{slide.title}</Text>
+                  <View style={styles.titleContainer}>
+                    <Icon name={slide.icon} size={24} color="#E95322" style={styles.icon} />
+                    <Text style={styles.title}>{slide.title}</Text>
+                  </View>
                   <Text style={styles.description}>{slide.description}</Text>
                 </View>
+                {renderPageIndicator()} 
                 <TouchableOpacity
                   onPress={handleNext}
                   style={[
@@ -107,7 +129,6 @@ const Onboarding = ({ onComplete }) => {
     </View>
   );
 };
-
 
 export default Onboarding;
 
@@ -136,11 +157,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 20,
   },
+  titleContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
   title: {
     fontSize: 24,
     fontWeight: "bold",
     marginBottom: 10,
-    marginTop: 30,
     color: "#E95322",
   },
   description: {
@@ -175,5 +199,25 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: "bold",
     textAlign:"center"
+  },
+  pageIndicatorContainer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    marginBottom: 20,
+  },
+  pageIndicator: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: "#ccc",
+    marginHorizontal: 4,
+  },
+  currentPageIndicator: {
+    backgroundColor: "#E95322",
+  },
+  icon: {
+    marginRight: 8,
+    marginBottom:8,
+    fontSize:30
   },
 });
