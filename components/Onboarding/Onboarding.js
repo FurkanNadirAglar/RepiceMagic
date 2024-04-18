@@ -56,8 +56,7 @@ const Onboarding = ({ onComplete }) => {
         title: "Step-by-Step Instructions",
         description: "Each recipe is explained step by step, making cooking easier than ever. Ideal for beginners to experts alike!",
     },
-];
-
+  ];
 
   return (
     <View style={styles.container}>
@@ -77,12 +76,14 @@ const Onboarding = ({ onComplete }) => {
           >
             <View style={styles.overlayContainer}>
               <View style={styles.slideTextContainer}>
-                <TouchableOpacity
-                  onPress={handlePrev}
-                  style={styles.backButton}
-                >
-                  <Text style={styles.backButtonText}>Geri</Text>
-                </TouchableOpacity>
+                {index !== 0 && ( // Conditionally render back button for all slides except the first one
+                  <TouchableOpacity
+                    onPress={handlePrev}
+                    style={styles.backButton}
+                  >
+                    <Text style={styles.backButtonText}>Back</Text>
+                  </TouchableOpacity>
+                )}
                 <View style={styles.textContainer}>
                   <Text style={styles.title}>{slide.title}</Text>
                   <Text style={styles.description}>{slide.description}</Text>
@@ -92,7 +93,7 @@ const Onboarding = ({ onComplete }) => {
                   style={[
                     styles.nextButton,
                     currentScreen === slides.length - 1 && styles.finishButton,
-                  ]} // Next ve Tamamla butonlarının stillerini ayarlamak için koşullu stillendirme
+                  ]}
                 >
                   <Text style={styles.nextButtonText}>
                     {currentScreen === slides.length - 1 ? "Get Started" : "Next"}
@@ -106,6 +107,7 @@ const Onboarding = ({ onComplete }) => {
     </View>
   );
 };
+
 
 export default Onboarding;
 
@@ -146,6 +148,7 @@ const styles = StyleSheet.create({
     color: "#333", // Updated color
     textAlign: "center", // Center alignment
     paddingHorizontal: 20, // Add padding horizontally
+    fontWeight:"700"
   },
   backButton: {
     position: "absolute",
