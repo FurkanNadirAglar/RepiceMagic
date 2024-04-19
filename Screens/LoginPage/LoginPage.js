@@ -21,6 +21,9 @@ const LoginPage = () => {
     // Burada, kullanıcı log in butonuna bastığında yönlendirme işlemi yapılır
     navigation.navigate("HomeScreen");
   };
+  const handleFingerPrint = () => {
+    navigation.navigate("FingerPrint");
+  };
   return (
     <View style={styles.container}>
       <Text
@@ -64,19 +67,26 @@ const LoginPage = () => {
           <Text style={styles.buttonText}>Log In</Text>
         </TouchableOpacity>
         <Text style={styles.orText}>or sign up with</Text>
-        <View style={styles.googleButton}>
-          <TouchableOpacity>
+        <View style={styles.icons}>
+          <TouchableOpacity onPress={() => console.log("Google icon pressed")}>
             <Image
               source={require("../../assets/login/GoogleIcon.png")}
-              style={styles.googleIcon}
+              style={styles.icon}
             />
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => navigation.navigate("SignupScreen")}>
-            <Text style={styles.signUpText}>
-              Don't have an account? Sign Up
-            </Text>
+          <TouchableOpacity
+            onPress={handleFingerPrint}
+          >
+            <Image
+              source={require("../../assets/login/FingerprintIcon.png")}
+              style={styles.icon}
+            />
           </TouchableOpacity>
         </View>
+
+        <TouchableOpacity onPress={() => navigation.navigate("SignupScreen")}>
+          <Text style={styles.signUpText}>Don't have an account? Sign Up</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -168,13 +178,21 @@ const styles = StyleSheet.create({
     color: "black",
     marginVertical: 5,
   },
-  googleButton: {
-    alignItems: "center",
+  icons: {
+    flexDirection: "row", // İkonları yatay olarak hizalamak için
+    alignItems: "center", // İkonları dikey olarak hizalamak için
+    alignSelf: "center",
+  },
+  icon: {
+    width: 40,
+    height: 40,
+    marginHorizontal: 5, // İkonlar arasındaki boşluğu ayarlamak için
   },
   signUpText: {
     marginTop: 10, // Google iconundan metne bir boşluk oluşturmak için
     color: "#E95322",
     fontWeight: "bold",
+    alignSelf:"center"
   },
   googleIcon: {
     width: 40,

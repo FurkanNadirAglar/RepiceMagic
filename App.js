@@ -6,6 +6,8 @@ import HomeScreen from "./Screens/HomeScreen/HomeScreen";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import SignupScreen from "./Screens/SignupScreen/SignupScreen";
+import FingerPrint from "./components/Onboarding/FingerPrint";
+
 const Stack = createStackNavigator();
 
 const App = () => {
@@ -31,6 +33,7 @@ const App = () => {
       <View style={{ flex: 1 }}>
         {showSplash ? (
           <View style={styles.splashContainer}>
+            <View style={styles.circle} /> 
             <ImageBackground
               source={require("./assets/splash/LogoShapes1.png")}
               style={styles.logoShapes1}
@@ -54,6 +57,11 @@ const App = () => {
               name="SignupScreen"
               component={SignupScreen}
               options={{ headerShown: false }} // HomeScreen için başlığın görünmemesini sağlar
+            /> 
+            <Stack.Screen
+              name="FingerPrint"
+              component={FingerPrint}
+              options={{ headerShown: false }} // HomeScreen için başlığın görünmemesini sağlar
             />
           </Stack.Navigator>
         )}
@@ -75,8 +83,17 @@ const styles = StyleSheet.create({
     height: 110, // LogoShapes1'ın yüksekliğini ayarlayın
     position: "absolute",
     zIndex: 1,
-    bottom: "50%", // LogoShapes1'ı ekrandaki yüksekliğin yarısı kadar aşağıya konumlandırır
+    bottom: "44%", // LogoShapes1'ı ekrandaki yüksekliğin yarısı kadar aşağıya konumlandırır
     // Ensure LogoShapes1 is above LogoShapes2
+  },
+  circle: {
+    width: 180,
+    height: 180,
+    borderRadius: 100,
+    borderWidth: 2,
+    borderColor: "#E95322",
+    position: "absolute",
+    zIndex: 0,
   },
 });
 
