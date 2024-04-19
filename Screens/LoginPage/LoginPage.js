@@ -1,17 +1,48 @@
-import React from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'react-native';
+import { Feather } from '@expo/vector-icons'; // Bu kısmı düzenle, kullanılan icon setine göre
+import { useNavigation } from '@react-navigation/native';
 
 const LoginPage = () => {
+  const [secureTextEntry, setSecureTextEntry] = useState(true);
+  const navigation = useNavigation();
+
+  const toggleSecureEntry = () => {
+    setSecureTextEntry(!secureTextEntry);
+  };
+  const handleLogin = () => {
+    // Burada, kullanıcı log in butonuna bastığında yönlendirme işlemi yapılır
+    navigation.navigate('HomeScreen');
+  };
   return (
     <View style={styles.container}>
-      <View style={styles.card}>
-        <Text style={styles.title}>Login</Text>
+      <Text style= {{marginBottom:100,fontSize:25, color:'#F8F8F8',fontWeight:"bold"}}>Log In</Text>
+      <View style={styles.loginContainer}>
+        <Text style={styles.title}>Welcome</Text>
         <View style={styles.inputContainer}>
-          <TextInput style={styles.input} placeholder="Username" />
-          <TextInput style={styles.input} placeholder="Password" secureTextEntry={true} />
+          <Text style={styles.inputLabel}>Email</Text>
+          <TextInput style={styles.input} placeholder="Enter your email" />
+          <Text style={styles.inputLabel}>Password</Text>
+          <View style={styles.passwordInputContainer}>
+            <TextInput
+              style={styles.passwordInput}
+              placeholder="Enter your password"
+              secureTextEntry={secureTextEntry}
+            />
+            <TouchableOpacity onPress={toggleSecureEntry} style={styles.toggleIcon}>
+              <Feather name={secureTextEntry ? 'eye' : 'eye-off'} size={24} color="#E95322" />
+            </TouchableOpacity>
+          </View>
+          <TouchableOpacity style={styles.forgotPassword}>
+            <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
+          </TouchableOpacity>
         </View>
-        <TouchableOpacity style={styles.button}>
-          <Text style={styles.buttonText}>Login</Text>
+        <TouchableOpacity style={styles.button} onPress={handleLogin}>
+        <Text style={styles.buttonText}>Log In</Text>
+      </TouchableOpacity>
+        <Text style={styles.orText}>or sign up with</Text>
+        <TouchableOpacity style={styles.googleButton}>
+          <Image source={require('../../assets/login/GoogleIcon.png')} style={styles.googleIcon} />
         </TouchableOpacity>
       </View>
     </View>
@@ -21,18 +52,21 @@ const LoginPage = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
+    justifyContent: 'flex-end',
     alignItems: 'center',
-    backgroundColor: '#f0f0f0',
+    backgroundColor: '#F5CB58',
   },
-  card: {
+  loginContainer: {
+    width: '100%',
+    height: '75%',
     backgroundColor: '#fff',
-    borderRadius: 10,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
     padding: 20,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
-      height: 2,
+      height: -2,
     },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
@@ -42,26 +76,75 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 20,
-    textAlign: 'center',
+    textAlign: 'left',
   },
   inputContainer: {
     marginBottom: 20,
   },
+  inputLabel: {
+    fontSize: 16,
+    marginBottom: 5,
+    color: '#333',
+    fontWeight: 'bold',
+  },
   input: {
-    backgroundColor: '#f8f8f8',
-    borderRadius: 5,
+    backgroundColor: '#F3E9B5',
+    borderRadius: 15,
     padding: 10,
     marginBottom: 10,
   },
+  passwordInputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    position: 'relative',
+  },
+  passwordInput: {
+    flex: 1,
+    backgroundColor: '#F3E9B5',
+    borderRadius: 15,
+    padding: 10,
+    marginBottom: 10,
+  },
+  toggleIcon: {
+    position: 'absolute',
+    right: 10,
+    top: 12, 
+  },
+  forgotPassword: {
+    alignSelf: 'flex-end',
+  },
+  forgotPasswordText: {
+    color: '#E95322',
+    fontWeight: 'bold',
+  },
   button: {
-    backgroundColor: '#007bff',
-    borderRadius: 5,
+    backgroundColor: '#E95322',
+    borderRadius: 15,
     padding: 15,
     alignItems: 'center',
+    marginTop: 20,
   },
   buttonText: {
     color: '#fff',
     fontWeight: 'bold',
+    fontSize: 20,
+  },
+  orText: {
+    textAlign: 'center',
+    marginTop:40,
+    color: 'black',
+    marginVertical:5
+
+  },
+  googleButton: {
+    alignItems: 'center',
+  },
+  googleIcon: {
+    width: 40,
+    height: 40,
+
+    
+   
   },
 });
 

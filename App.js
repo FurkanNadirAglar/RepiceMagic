@@ -1,7 +1,11 @@
-import React, { useState, useEffect } from 'react';
-import { View, ImageBackground, StyleSheet } from 'react-native';
-import Onboarding from './components/Onboarding/Onboarding'; // Import the Onboarding component
-import LoginPage from './Screens/LoginPage/LoginPage';
+import React, { useState, useEffect } from "react";
+import { View, ImageBackground, StyleSheet } from "react-native";
+import Onboarding from "./components/Onboarding/Onboarding"; // Import the Onboarding component
+import LoginPage from "./Screens/LoginPage/LoginPage";
+import HomeScreen from "./Screens/HomeScreen/HomeScreen";
+import { NavigationContainer } from "@react-navigation/native";
+import { createStackNavigator } from "@react-navigation/stack";
+const Stack = createStackNavigator();
 
 const App = () => {
   const [completed, setCompleted] = useState(false);
@@ -22,42 +26,51 @@ const App = () => {
   };
 
   return (
-    <View style={{ flex: 1 }}>
-      {showSplash ? (
-        <View style={styles.splashContainer}>
-          <ImageBackground source={require('./assets/splash/LogoShapes2.png')} style={styles.splashImage}>
-            <ImageBackground source={require('./assets/splash/LogoShapes1.png')} style={styles.logoShapes1} />
-          </ImageBackground>
-        </View>
-      ) : !completed ? (
-        <Onboarding onComplete={handleComplete} />
-      ) : (
-        <LoginPage />
-      )}
-    </View>
+    <NavigationContainer>
+      <View style={{ flex: 1 }}>
+        {showSplash ? (
+          <View style={styles.splashContainer}>
+            <ImageBackground
+              source={require("./assets/splash/LogoShapes1.png")}
+              style={styles.logoShapes1}
+            />
+          </View>
+        ) : !completed ? (
+          <Onboarding onComplete={handleComplete} />
+        ) : (
+          <Stack.Navigator>
+            <Stack.Screen
+              name="LoginPage"
+              component={LoginPage}
+              options={{ headerShown: false }} // LoginPage için başlığın görünmemesini sağlar
+            />
+            <Stack.Screen
+              name="HomeScreen"
+              component={HomeScreen}
+              options={{ headerShown: false }} // HomeScreen için başlığın görünmemesini sağlar
+            />
+          </Stack.Navigator>
+        )}
+      </View>
+    </NavigationContainer>
   );
 };
 
 const styles = StyleSheet.create({
   splashContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#FFF', // Set your desired background color for the splash screen
+    justifyContent: "center",
+    alignItems: "center",
+    //et your desired background color for the splash screen
   },
-  splashImage: {
-    width: '80%', // Adjust the width as needed
-    height: '50%', // Adjust the height as needed
-    resizeMode: 'contain', // Adjust the resize mode as needed
-    marginBottom: 20, // Add margin between images if needed
-  },
+
   logoShapes1: {
-    width: '30%', // Adjust the width of LogoShapes1 inside LogoShapes2
-    height: '30%', // Adjust the height of LogoShapes1 inside LogoShapes2
-    position: 'absolute', // Position LogoShapes1 absolutely inside LogoShapes2
-    top: '35%', // Adjust the top position of LogoShapes1 inside LogoShapes2
-    left: '35%', // Adjust the left position of LogoShapes1 inside LogoShapes2
-    zIndex: 1, // Ensure LogoShapes1 is above LogoShapes2
+    width: 130, // LogoShapes1'ın genişliğini ayarlayın
+    height: 110, // LogoShapes1'ın yüksekliğini ayarlayın
+    position: "absolute",
+    zIndex: 1,
+    bottom: "50%", // LogoShapes1'ı ekrandaki yüksekliğin yarısı kadar aşağıya konumlandırır
+    // Ensure LogoShapes1 is above LogoShapes2
   },
 });
 
