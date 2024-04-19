@@ -10,7 +10,7 @@ import {
 import { Feather } from "@expo/vector-icons"; // Bu kısmı düzenle, kullanılan icon setine göre
 import { useNavigation } from "@react-navigation/native";
 
-const LoginPage = () => {
+const SignupScreen = () => {
   const [secureTextEntry, setSecureTextEntry] = useState(true);
   const navigation = useNavigation();
 
@@ -31,11 +31,18 @@ const LoginPage = () => {
           fontWeight: "bold",
         }}
       >
-        Log In
+        New Account
       </Text>
-      <View style={styles.loginContainer}>
-        <Text style={styles.title}>Welcome</Text>
+      <View style={styles.signupContainer}>
         <View style={styles.inputContainer}>
+          <Text style={styles.inputLabel}>Username</Text>
+          <TextInput style={styles.input} placeholder="Enter your username" />
+          <Text style={styles.inputLabel}>Telephone Number</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Enter your telephone number"
+            keyboardType="phone-pad"
+          />
           <Text style={styles.inputLabel}>Email</Text>
           <TextInput style={styles.input} placeholder="Enter your email" />
           <Text style={styles.inputLabel}>Password</Text>
@@ -56,12 +63,10 @@ const LoginPage = () => {
               />
             </TouchableOpacity>
           </View>
-          <TouchableOpacity style={styles.forgotPassword}>
-            <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
-          </TouchableOpacity>
         </View>
+
         <TouchableOpacity style={styles.button} onPress={handleLogin}>
-          <Text style={styles.buttonText}>Log In</Text>
+          <Text style={styles.buttonText}>Sign Up</Text>
         </TouchableOpacity>
         <Text style={styles.orText}>or sign up with</Text>
         <View style={styles.googleButton}>
@@ -71,9 +76,9 @@ const LoginPage = () => {
               style={styles.googleIcon}
             />
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => navigation.navigate("SignupScreen")}>
+          <TouchableOpacity onPress={() => navigation.navigate("LoginPage")}>
             <Text style={styles.signUpText}>
-              Don't have an account? Sign Up
+              Already have an account? Log in
             </Text>
           </TouchableOpacity>
         </View>
@@ -89,7 +94,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "#F5CB58",
   },
-  loginContainer: {
+  signupContainer: {
     width: "100%",
     height: "75%",
     backgroundColor: "#fff",
@@ -105,12 +110,7 @@ const styles = StyleSheet.create({
     shadowRadius: 3.84,
     elevation: 5,
   },
-  title: {
-    fontSize: 24,
-    fontWeight: "bold",
-    marginBottom: 20,
-    textAlign: "left",
-  },
+
   inputContainer: {
     marginBottom: 20,
   },
@@ -143,13 +143,7 @@ const styles = StyleSheet.create({
     right: 10,
     top: 12,
   },
-  forgotPassword: {
-    alignSelf: "flex-end",
-  },
-  forgotPasswordText: {
-    color: "#E95322",
-    fontWeight: "bold",
-  },
+
   button: {
     backgroundColor: "#E95322",
     borderRadius: 15,
@@ -182,4 +176,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default LoginPage;
+export default SignupScreen;

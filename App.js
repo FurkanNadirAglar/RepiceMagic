@@ -5,6 +5,7 @@ import LoginPage from "./Screens/LoginPage/LoginPage";
 import HomeScreen from "./Screens/HomeScreen/HomeScreen";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
+import SignupScreen from "./Screens/SignupScreen/SignupScreen";
 const Stack = createStackNavigator();
 
 const App = () => {
@@ -47,6 +48,11 @@ const App = () => {
             <Stack.Screen
               name="HomeScreen"
               component={HomeScreen}
+              options={{ headerShown: false }} // HomeScreen için başlığın görünmemesini sağlar
+            />
+            <Stack.Screen
+              name="SignupScreen"
+              component={SignupScreen}
               options={{ headerShown: false }} // HomeScreen için başlığın görünmemesini sağlar
             />
           </Stack.Navigator>
