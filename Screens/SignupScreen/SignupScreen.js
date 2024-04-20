@@ -1,3 +1,7 @@
+import { initializeApp } from "firebase/app";
+import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+import { getFirestore, collection, doc, setDoc } from "firebase/firestore";
+import { useNavigation } from "@react-navigation/native";
 import React, { useState } from "react";
 import {
   View,
@@ -6,23 +10,53 @@ import {
   TouchableOpacity,
   StyleSheet,
   Image,
-} from "react-native";
+} from "react-native";// Bu kısmı düzenle, kullanılan icon setine göre
 import { Feather } from "@expo/vector-icons"; // Bu kısmı düzenle, kullanılan icon setine göre
-import { useNavigation } from "@react-navigation/native";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCyJakMMiEiKwFVwUHSGzGIM8oDNaF3d4M",
+  authDomain: "repicemagic.firebaseapp.com",
+  projectId: "repicemagic",
+  storageBucket: "repicemagic.appspot.com",
+  messagingSenderId: "545524448774",
+  appId: "1:545524448774:web:aed3afd860178d20dc8d87"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
 
 const SignupScreen = () => {
   const [secureTextEntry, setSecureTextEntry] = useState(true);
+  const [username, setUsername] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const navigation = useNavigation();
 
   const toggleSecureEntry = () => {
     setSecureTextEntry(!secureTextEntry);
   };
-  const handleLogin = () => {
-    // Burada, kullanıcı log in butonuna bastığında yönlendirme işlemi yapılır
-    navigation.navigate("HomeScreen");
-  };  const handleFingerPrint = () => {
-    navigation.navigate("FingerPrint");
+
+  const handleSignUp = async () => {
+    try {
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      const user = userCredential.user;
+      await setDoc(doc(db, "users", user.uid), {
+        username: username,
+        phoneNumber: phoneNumber,
+        email: email,
+      });
+      navigation.navigate("LoginPage");
+    } catch (error) {
+      console.error("Sign Up error:", error.message);
+    }
   };
+
   return (
     <View style={styles.container}>
       <Text
@@ -38,21 +72,35 @@ const SignupScreen = () => {
       <View style={styles.signupContainer}>
         <View style={styles.inputContainer}>
           <Text style={styles.inputLabel}>Username</Text>
-          <TextInput style={styles.input} placeholder="Enter your username" />
+          <TextInput
+            style={styles.input}
+            placeholder="Enter your username"
+            value={username}
+            onChangeText={(text) => setUsername(text)}
+          />
           <Text style={styles.inputLabel}>Telephone Number</Text>
           <TextInput
             style={styles.input}
             placeholder="Enter your telephone number"
             keyboardType="phone-pad"
+            value={phoneNumber}
+            onChangeText={(text) => setPhoneNumber(text)}
           />
           <Text style={styles.inputLabel}>Email</Text>
-          <TextInput style={styles.input} placeholder="Enter your email" />
+          <TextInput
+            style={styles.input}
+            placeholder="Enter your email"
+            value={email}
+            onChangeText={(text) => setEmail(text)}
+          />
           <Text style={styles.inputLabel}>Password</Text>
           <View style={styles.passwordInputContainer}>
             <TextInput
               style={styles.passwordInput}
               placeholder="Enter your password"
               secureTextEntry={secureTextEntry}
+              value={password}
+              onChangeText={(text) => setPassword(text)}
             />
             <TouchableOpacity
               onPress={toggleSecureEntry}
@@ -67,7 +115,7 @@ const SignupScreen = () => {
           </View>
         </View>
 
-        <TouchableOpacity style={styles.button} onPress={handleLogin}>
+        <TouchableOpacity style={styles.button} onPress={handleSignUp}>
           <Text style={styles.buttonText}>Sign Up</Text>
         </TouchableOpacity>
         <Text style={styles.orText}>or sign up with</Text>
@@ -79,7 +127,7 @@ const SignupScreen = () => {
             />
           </TouchableOpacity>
           <TouchableOpacity
-            onPress={handleFingerPrint}
+            onPress={() => navigation.navigate("FingerPrint")}
           >
             <Image
               source={require("../../assets/login/FingerprintIcon.png")}
@@ -94,7 +142,6 @@ const SignupScreen = () => {
     </View>
   );
 };
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -118,7 +165,6 @@ const styles = StyleSheet.create({
     shadowRadius: 3.84,
     elevation: 5,
   },
-
   inputContainer: {
     marginBottom: 20,
   },
@@ -152,13 +198,14 @@ const styles = StyleSheet.create({
     top: 12,
   },
   icons: {
-    flexDirection: "row", // İkonları yatay olarak hizalamak için
-    alignItems: "center", // İkonları dikey olarak hizalamak için
+    flexDirection: "row",
+    alignItems: "center",
     alignSelf: "center",
-  },icon: {
+  },
+  icon: {
     width: 40,
     height: 40,
-    marginHorizontal: 5, // İkonlar arasındaki boşluğu ayarlamak için
+    marginHorizontal: 5,
   },
   button: {
     backgroundColor: "#E95322",
@@ -178,19 +225,11 @@ const styles = StyleSheet.create({
     color: "black",
     marginVertical: 5,
   },
-  googleButton: {
-    alignItems: "center",
-  },
   loginText: {
-    marginTop: 10, // Google iconundan metne bir boşluk oluşturmak için
+    marginTop: 10,
     color: "#E95322",
     fontWeight: "bold",
-    alignSelf:"center"
-  },
-  googleIcon: {
-    width: 40,
-    height: 40,
+    alignSelf: "center",
   },
 });
-
 export default SignupScreen;

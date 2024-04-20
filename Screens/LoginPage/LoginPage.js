@@ -9,21 +9,29 @@ import {
 } from "react-native";
 import { Feather } from "@expo/vector-icons"; // Bu kısmı düzenle, kullanılan icon setine göre
 import { useNavigation } from "@react-navigation/native";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
+import { db } from "../../config/firebaseconfig"; // Firestore bağlantısını buraya ekleyin
 
 const LoginPage = () => {
   const [secureTextEntry, setSecureTextEntry] = useState(true);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const navigation = useNavigation();
 
   const toggleSecureEntry = () => {
     setSecureTextEntry(!secureTextEntry);
   };
-  const handleLogin = () => {
-    // Burada, kullanıcı log in butonuna bastığında yönlendirme işlemi yapılır
-    navigation.navigate("HomeScreen");
+
+  const handleLogin = async () => {
+    try {
+      const auth = getAuth();
+      await signInWithEmailAndPassword(auth, email, password);
+      navigation.navigate("HomeScreen");
+    } catch (error) {
+      console.error("Login error:", error.message);
+    }
   };
-  const handleFingerPrint = () => {
-    navigation.navigate("FingerPrint");
-  };
+
   return (
     <View style={styles.container}>
       <Text
@@ -40,13 +48,20 @@ const LoginPage = () => {
         <Text style={styles.title}>Welcome</Text>
         <View style={styles.inputContainer}>
           <Text style={styles.inputLabel}>Email</Text>
-          <TextInput style={styles.input} placeholder="Enter your email" />
+          <TextInput
+            style={styles.input}
+            placeholder="Enter your email"
+            value={email}
+            onChangeText={(text) => setEmail(text)}
+          />
           <Text style={styles.inputLabel}>Password</Text>
           <View style={styles.passwordInputContainer}>
             <TextInput
               style={styles.passwordInput}
               placeholder="Enter your password"
               secureTextEntry={secureTextEntry}
+              value={password}
+              onChangeText={(text) => setPassword(text)}
             />
             <TouchableOpacity
               onPress={toggleSecureEntry}
@@ -74,9 +89,7 @@ const LoginPage = () => {
               style={styles.icon}
             />
           </TouchableOpacity>
-          <TouchableOpacity
-            onPress={handleFingerPrint}
-          >
+          <TouchableOpacity onPress={() => navigation.navigate("FingerPrint")}>
             <Image
               source={require("../../assets/login/FingerprintIcon.png")}
               style={styles.icon}

@@ -30,42 +30,40 @@ const App = () => {
 
   return (
     <NavigationContainer>
-      <View style={{ flex: 1 }}>
-        {showSplash ? (
-          <View style={styles.splashContainer}>
-            <View style={styles.circle} /> 
-            <ImageBackground
-              source={require("./assets/splash/LogoShapes1.png")}
-              style={styles.logoShapes1}
-            />
-          </View>
-        ) : !completed ? (
-          <Onboarding onComplete={handleComplete} />
-        ) : (
-          <Stack.Navigator>
-            <Stack.Screen
-              name="LoginPage"
-              component={LoginPage}
-              options={{ headerShown: false }} // LoginPage için başlığın görünmemesini sağlar
-            />
-            <Stack.Screen
-              name="HomeScreen"
-              component={HomeScreen}
-              options={{ headerShown: false }} // HomeScreen için başlığın görünmemesini sağlar
-            />
-            <Stack.Screen
-              name="SignupScreen"
-              component={SignupScreen}
-              options={{ headerShown: false }} // HomeScreen için başlığın görünmemesini sağlar
-            /> 
-            <Stack.Screen
-              name="FingerPrint"
-              component={FingerPrint}
-              options={{ headerShown: false }} // HomeScreen için başlığın görünmemesini sağlar
-            />
-          </Stack.Navigator>
-        )}
-      </View>
+      {showSplash ? (
+        <View style={styles.splashContainer}>
+          <View style={styles.circle} />
+          <ImageBackground
+            source={require("./assets/splash/LogoShapes1.png")}
+            style={styles.logoShapes1}
+          />
+        </View>
+      ) : !completed ? (
+        <Onboarding onComplete={handleComplete} />
+      ) : (
+        <Stack.Navigator>
+          <Stack.Screen
+            name="LoginPage"
+            component={LoginPage}
+            options={{ headerShown: false }} // LoginPage için başlığın görünmemesini sağlar
+          />
+          <Stack.Screen
+            name="HomeScreen"
+            component={HomeScreen}
+            options={{ headerShown: false }} // HomeScreen için başlığın görünmemesini sağlar
+          />
+          <Stack.Screen
+            name="SignupScreen"
+            component={SignupScreen}
+            options={{ headerShown: false }} // HomeScreen için başlığın görünmemesini sağlar
+          />
+          <Stack.Screen
+            name="FingerPrint"
+            component={FingerPrint}
+            options={{ headerShown: false }} // HomeScreen için başlığın görünmemesini sağlar
+          />
+        </Stack.Navigator>
+      )}
     </NavigationContainer>
   );
 };
