@@ -26,7 +26,7 @@ const LoginPage = () => {
     try {
       const auth = getAuth();
       await signInWithEmailAndPassword(auth, email, password);
-      navigation.navigate("HomeScreen");
+      navigation.navigate("Home");
     } catch (error) {
       console.error("Login error:", error.message);
     }
