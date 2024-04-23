@@ -65,11 +65,7 @@ const App = () => {
 const AuthStack = () => {
   return (
     <Stack.Navigator>
-      <Stack.Screen
-        name="Onboarding"
-        component={OnboardingWithComplete}
-        options={{ headerShown: false }}
-      />
+    
       <Stack.Screen
         name="Login"
         component={LoginPage}
@@ -103,6 +99,7 @@ const HomeTab = () => {
       <Tab.Screen name="Home" component={HomeStack}   options={{ headerShown: false }}/>
       <Tab.Screen name="Profile" component={Profile}   options={{ headerShown: false }}/>
       <Tab.Screen name="Settings" component={Settings}  options={{ headerShown: false }} />
+      
     </Tab.Navigator>
   );
 };
