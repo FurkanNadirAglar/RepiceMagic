@@ -1,10 +1,12 @@
 import { View, Text } from 'react-native'
 import React from 'react'
 
-export default function Settings() {
+const ChatBot = () => {
   return (
     <View>
-      <Text>Settings</Text>
+      <Text>ChatBot</Text>
     </View>
   )
 }
+
+export default ChatBot

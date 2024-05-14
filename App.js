@@ -4,13 +4,15 @@ import Onboarding from "./components/Onboarding/Onboarding";
 import LoginPage from "./Screens/LoginPage/LoginPage";
 import HomeScreen from "./Screens/HomeScreen/HomeScreen";
 import Profile from "./Screens/Profile/Profile";
-import Settings from "./Screens/Settings/Settings";
+import Favorite from "./Screens/Favorite/Favorite";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import SignupScreen from "./Screens/SignupScreen/SignupScreen";
 import FingerPrint from "./components/Onboarding/FingerPrint";
 import RepicesDetails from "./components/RepicesDetails.js/RepicesDetails";
+import ChatBot from "./Screens/ChatBot/ChatBot";
+import { MaterialIcons } from '@expo/vector-icons';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -85,10 +87,59 @@ const AuthStack = () => {
 
 const HomeTab = () => {
   return (
-    <Tab.Navigator>
-      <Tab.Screen name="Home" component={HomeStack} options={{ headerShown: false }} />
-      <Tab.Screen name="Profile" component={Profile} options={{ headerShown: false }} />
-      <Tab.Screen name="Settings" component={Settings} options={{ headerShown: false }} />
+    <Tab.Navigator
+      screenOptions={({ route }) => ({
+        tabBarIcon: ({ color }) => {
+          let iconName;
+
+          if (route.name === 'Home') {
+            iconName = 'home';
+          } else if (route.name === 'Favorite') {
+            iconName = 'favorite';
+          } else if (route.name === 'ChatBot') {
+            iconName = 'android';
+          } else if (route.name === 'Profile') {
+            iconName = 'person';
+          }
+
+          return <MaterialIcons name={iconName} size={24} color={color} />;
+        },
+      })}
+      tabBarOptions={{
+        activeTintColor: 'tomato',
+        inactiveTintColor: 'gray',
+        showLabel: false,
+        style: {
+          backgroundColor: '#fff',
+          borderTopWidth: 0,
+          elevation: 10,
+          shadowOpacity: 0.75,
+          shadowRadius: 5,
+          shadowColor: 'rgba(0,0,0,)',
+          shadowOffset: { width: 0, height: 0 }
+        }
+      }}
+    >
+      <Tab.Screen
+        name="Home"
+        component={HomeStack}
+        options={{ headerShown: false }}
+      />
+      <Tab.Screen
+        name="Favorite"
+        component={Favorite}
+        options={{ headerShown: false }}
+      />
+      <Tab.Screen
+        name="ChatBot"
+        component={ChatBot}
+        options={{ headerShown: false }}
+      />
+      <Tab.Screen
+        name="Profile"
+        component={Profile}
+        options={{ headerShown: false }}
+      />
     </Tab.Navigator>
   );
 };
