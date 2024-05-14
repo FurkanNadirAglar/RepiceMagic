@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { View, ImageBackground, StyleSheet } from "react-native";
-import Onboarding from "./components/Onboarding/Onboarding"; // Import the Onboarding component
+import Onboarding from "./components/Onboarding/Onboarding"; 
 import LoginPage from "./Screens/LoginPage/LoginPage";
 import HomeScreen from "./Screens/HomeScreen/HomeScreen";
 import Profile from "./Screens/Profile/Profile";
@@ -10,6 +10,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import SignupScreen from "./Screens/SignupScreen/SignupScreen";
 import FingerPrint from "./components/Onboarding/FingerPrint";
+import RepicesDetails from "./components/RepicesDetails.js/RepicesDetails";
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -19,12 +20,10 @@ const App = () => {
   const [showSplash, setShowSplash] = useState(true);
 
   useEffect(() => {
-    // Simulate a splash screen delay
     const splashTimer = setTimeout(() => {
       setShowSplash(false);
-    }, 2000); // 2000 milliseconds = 2 seconds
+    }, 2000);
 
-    // Clear the timer when the component unmounts or when completed
     return () => clearTimeout(splashTimer);
   }, []);
 
@@ -65,7 +64,6 @@ const App = () => {
 const AuthStack = () => {
   return (
     <Stack.Navigator>
-    
       <Stack.Screen
         name="Login"
         component={LoginPage}
@@ -85,21 +83,12 @@ const AuthStack = () => {
   );
 };
 
-const OnboardingWithComplete = ({ navigation }) => {
-  const handleComplete = () => {
-    navigation.navigate("Login");
-  };
-
-  return <Onboarding onComplete={handleComplete} />;
-};
-
 const HomeTab = () => {
   return (
     <Tab.Navigator>
-      <Tab.Screen name="Home" component={HomeStack}   options={{ headerShown: false }}/>
-      <Tab.Screen name="Profile" component={Profile}   options={{ headerShown: false }}/>
-      <Tab.Screen name="Settings" component={Settings}  options={{ headerShown: false }} />
-      
+      <Tab.Screen name="Home" component={HomeStack} options={{ headerShown: false }} />
+      <Tab.Screen name="Profile" component={Profile} options={{ headerShown: false }} />
+      <Tab.Screen name="Settings" component={Settings} options={{ headerShown: false }} />
     </Tab.Navigator>
   );
 };
@@ -112,7 +101,11 @@ const HomeStack = () => {
         component={HomeScreen}
         options={{ headerShown: false }}
       />
-       
+      <Stack.Screen
+        name="RepicesDetails"
+        component={RepicesDetails}
+        options={{ headerShown: false }}
+      />
     </Stack.Navigator>
   );
 };

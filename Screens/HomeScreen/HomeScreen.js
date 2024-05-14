@@ -1,4 +1,11 @@
-import { View, Text, Image, TextInput, FlatList, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  Image,
+  TextInput,
+  FlatList,
+  TouchableOpacity,
+} from "react-native";
 import React, { useState, useEffect } from "react";
 import Icon from "react-native-vector-icons/FontAwesome";
 import Repices from "../../components/Repices/Repices";
@@ -6,6 +13,7 @@ import Repices from "../../components/Repices/Repices";
 const HomeScreen = () => {
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
+  const [searchText, setSearchText] = useState("");
 
   useEffect(() => {
     fetchCategories();
@@ -13,11 +21,13 @@ const HomeScreen = () => {
 
   const fetchCategories = async () => {
     try {
-      const response = await fetch('https://www.themealdb.com/api/json/v1/1/categories.php');
+      const response = await fetch(
+        "https://www.themealdb.com/api/json/v1/1/categories.php"
+      );
       const data = await response.json();
       setCategories(data.categories);
     } catch (error) {
-      console.error('Error fetching categories: ', error);
+      console.error("Error fetching categories: ", error);
     }
   };
 
@@ -33,7 +43,13 @@ const HomeScreen = () => {
         }}
       >
         <View style={{ alignItems: "center" }}>
-          <View style={{ backgroundColor: selectedCategory === item ? "yellow" : "transparent", borderRadius: 30 }}>
+          <View
+            style={{
+              backgroundColor:
+                selectedCategory === item ? "yellow" : "transparent",
+              borderRadius: 30,
+            }}
+          >
             <Image
               source={{ uri: item.strCategoryThumb }}
               style={{ width: 70, height: 70, borderRadius: 35 }}
@@ -42,9 +58,12 @@ const HomeScreen = () => {
           <Text style={{ marginTop: 10 }}>{item.strCategory}</Text>
         </View>
       </TouchableOpacity>
-
-      
     );
+  };
+
+  const handleSearch = () => {
+    // Burada arama işlemini gerçekleştirebilirsin
+    console.log("Arama: ", searchText);
   };
 
   return (
@@ -67,8 +86,18 @@ const HomeScreen = () => {
           <Icon name="bell" size={25} color="gray" style={{ marginLeft: 20 }} />
         </View>
       </View>
-      <Text style={{ paddingHorizontal: 30, paddingBottom: 30, fontSize: 30 }}>Make your own food, stay at home</Text>
-      <View style={{ paddingHorizontal: 20, paddingBottom: 20, flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+      <Text style={{ paddingHorizontal: 30, paddingBottom: 30, fontSize: 30 }}>
+        Make your own food, stay at home
+      </Text>
+      <View
+        style={{
+          paddingHorizontal: 20,
+          paddingBottom: 20,
+          flexDirection: "row",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
+      >
         <View
           style={{
             flexDirection: "row",
@@ -83,21 +112,30 @@ const HomeScreen = () => {
           <TextInput
             placeholder="Search any recipe"
             style={{ marginLeft: 10, flex: 1 }}
+            value={searchText}
+            onChangeText={(text) => setSearchText(text)}
           />
-          <View style={{ backgroundColor: "white", borderRadius: 20 }}>
-            <Icon name="search" size={22} color="black" style={{ padding: 10 }} />
-          </View>
+          <TouchableOpacity onPress={handleSearch}>
+            <View style={{ backgroundColor: "white", borderRadius: 20 }}>
+              <Icon
+                name="search"
+                size={22}
+                color="black"
+                style={{ padding: 10 }}
+              />
+            </View>
+          </TouchableOpacity>
         </View>
       </View>
       <FlatList
         data={categories}
         horizontal
         showsHorizontalScrollIndicator={false}
-        contentContainerStyle={{ paddingLeft: 20 }}
+        contentContainerStyle={{ paddingLeft: 5 }}
         keyExtractor={(item) => item.idCategory}
         renderItem={renderCategoryItem}
       />
-      <Repices selectedCategory={selectedCategory} /> 
+      <Repices selectedCategory={selectedCategory} />
     </View>
   );
 };

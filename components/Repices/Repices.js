@@ -1,8 +1,11 @@
-import { View, Text, Image } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react';
+import { View, Text, Image, StyleSheet, TouchableOpacity, ScrollView, ActivityIndicator } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 
-const Repices = ({ selectedCategory }) => {
+const Recipes = ({ selectedCategory }) => {
   const [recipes, setRecipes] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const navigation = useNavigation();
 
   useEffect(() => {
     fetchRecipes();
@@ -10,31 +13,95 @@ const Repices = ({ selectedCategory }) => {
 
   const fetchRecipes = async () => {
     if (selectedCategory) {
+      setLoading(true);
       try {
         const response = await fetch(`https://www.themealdb.com/api/json/v1/1/filter.php?c=${selectedCategory.strCategory}`);
         const data = await response.json();
         setRecipes(data.meals);
+        setLoading(false);
       } catch (error) {
         console.error('Error fetching recipes: ', error);
+        setLoading(false);
       }
     }
   };
 
-  return (
-    
-    <View style={{ marginTop: 30 }}>
-      <Text style={{ fontSize: 25, marginLeft:10 }}>Recipes</Text>
-      {recipes.map((recipe) => (
-        <View key={recipe.idMeal} style={{ flexDirection: "row", alignItems: "center", marginTop: 20, marginLeft: 10 }}>
-          <Image
-            source={{ uri: recipe.strMealThumb }}
-            style={{ width: 50, height: 50, borderRadius: 25 }}
-          />
-          <Text style={{ marginLeft: 10 }}>{recipe.strMeal}</Text>
-        </View>
-      ))}
-    </View>
-  );
-}
+  const handlePress = (recipe) => {
+    navigation.navigate('RepicesDetails', { idMeal: recipe.idMeal });
+  };
 
-export default Repices
+  const renderRecipes = () => {
+    return recipes.map((recipe) => (
+      <TouchableOpacity key={recipe.idMeal} style={styles.card} onPress={() => handlePress(recipe)}>
+        <Image
+          source={{ uri: recipe.strMealThumb }}
+          style={styles.recipeImage}
+          resizeMode="cover"
+        />
+        <View style={styles.cardContent}>
+          <Text style={styles.recipeName}>{recipe.strMeal}</Text>
+        </View>
+      </TouchableOpacity>
+    ));
+  };
+
+  return (
+    <ScrollView>
+      <View style={styles.container}>
+        <Text style={styles.title}>Recipes</Text>
+        {loading ? (
+          <ActivityIndicator size="large" color="gray" />
+        ) : (
+          <View style={styles.recipesContainer}>{renderRecipes()}</View>
+        )}
+      </View>
+    </ScrollView>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    marginTop: 30,
+    paddingHorizontal: 10,
+  },
+  title: {
+    fontSize: 25,
+    marginLeft: 10,
+    marginBottom: 10,
+  },
+  recipesContainer: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "space-between",
+  },
+  card: {
+    width: "48%",
+    marginBottom: 10,
+    borderRadius: 10,
+    backgroundColor: "#fff",
+    elevation: 3,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+  },
+  recipeImage: {
+    width: "100%",
+    height: 200,
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
+  },
+  cardContent: {
+    padding: 10,
+  },
+  recipeName: {
+    fontSize: 16,
+    textAlign: "center",
+    marginTop: 10,
+  },
+});
+
+export default Recipes;
