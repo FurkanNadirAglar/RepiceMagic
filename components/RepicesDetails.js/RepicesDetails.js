@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, Image, StyleSheet, ActivityIndicator } from 'react-native';
-import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
+import { View, Text, Image, StyleSheet, ActivityIndicator, TouchableOpacity } from 'react-native';
+import { ScrollView } from 'react-native-gesture-handler';
 import { Ionicons } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
 
 const RecipeDetails = ({ route }) => {
   const { idMeal } = route.params;
   const [recipeDetails, setRecipeDetails] = useState(null);
   const [loading, setLoading] = useState(true);
+  const navigation = useNavigation();
 
   useEffect(() => {
     const fetchRecipeDetails = async () => {
@@ -41,23 +43,40 @@ const RecipeDetails = ({ route }) => {
   }
 
   return (
-    <ScrollView style={styles.container}>
-      <Image source={{ uri: recipeDetails.strMealThumb }} style={styles.image} />
-      <View style={styles.detailsContainer}>
-        <Text style={styles.title}>{recipeDetails.strMeal}</Text>
-        <Text style={styles.sectionTitle}>Ingredients:</Text>
-        <View style={styles.ingredientsContainer}>
-          {getIngredients(recipeDetails).map((ingredient, index) => (
-            <TouchableOpacity key={index} style={styles.ingredient}>
-              <Ionicons name="checkmark-circle-outline" size={24} color="#FF6347" style={{ marginRight: 10 }} />
-              <Text style={styles.ingredientText}>{ingredient}</Text>
-            </TouchableOpacity>
-          ))}
-        </View>
-        <Text style={styles.sectionTitle}>Instructions:</Text>
-        <Text style={styles.instructions}>{recipeDetails.strInstructions}</Text>
+    <View style={styles.container}>
+      <View style={styles.header}>
+        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+          <Ionicons name="arrow-back" size={24} color="#FFF" />
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>{recipeDetails.strMeal}</Text>
       </View>
-    </ScrollView>
+      <ScrollView style={styles.scrollContainer}>
+        <Image source={{ uri: recipeDetails.strMealThumb }} style={styles.image} />
+        <View style={styles.detailsContainer}>
+          <Text style={styles.sectionTitle}>Ingredients</Text>
+          <View style={styles.ingredientsContainer}>
+            {getIngredients(recipeDetails).map((ingredient, index) => (
+              <View key={index} style={styles.ingredient}>
+                <Ionicons name="checkmark-circle" size={24} color="#FF6347" style={{ marginRight: 10 }} />
+                <Text style={styles.ingredientText}>{ingredient}</Text>
+              </View>
+            ))}
+          </View>
+          <Text style={styles.sectionTitle}>Instructions</Text>
+          <View style={styles.instructionsContainer}>
+            {getInstructions(recipeDetails.strInstructions).map((step, index) => (
+              <View key={index} style={styles.instruction}>
+                <Text style={styles.stepNumber}>{index + 1}</Text>
+                <Text style={styles.instructionText}>{step}</Text>
+              </View>
+            ))}
+          </View>
+        </View>
+      </ScrollView>
+      <TouchableOpacity style={styles.fab}>
+        <Ionicons name="heart-outline" size={24} color="#FFF" />
+      </TouchableOpacity>
+    </View>
   );
 };
 
@@ -75,10 +94,33 @@ const getIngredients = (recipeDetails) => {
   return ingredients;
 };
 
+const getInstructions = (instructions) => {
+  return instructions.split('\n').filter(instruction => instruction);
+};
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#FFF',
+  },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FF6347',
+    paddingTop: 40,
+    paddingBottom: 10,
+    paddingHorizontal: 20,
+  },
+  backButton: {
+    marginRight: 10,
+  },
+  headerTitle: {
+    fontSize: 20,
+    color: '#FFF',
+    fontWeight: 'bold',
+  },
+  scrollContainer: {
+    flex: 1,
   },
   loadingContainer: {
     flex: 1,
@@ -90,38 +132,71 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 250,
     resizeMode: 'cover',
+    borderBottomLeftRadius: 20,
+    borderBottomRightRadius: 20,
+    marginBottom: 20,
   },
   detailsContainer: {
     padding: 20,
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    marginBottom: 10,
-    color: '#333',
-    textAlign: 'center',
   },
   sectionTitle: {
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 10,
     color: '#FF6347',
+    borderBottomWidth: 2,
+    borderBottomColor: '#FF6347',
   },
-  instructions: {
-    fontSize: 16,
-    lineHeight: 24,
-    color: '#555',
+  ingredientsContainer: {
     marginBottom: 20,
   },
-  ingredientsContainer: {},
   ingredient: {
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 10,
+    backgroundColor: '#F9F9F9',
+    padding: 10,
+    borderRadius: 5,
+    borderWidth: 1,
+    borderColor: '#ECECEC',
   },
   ingredientText: {
     fontSize: 16,
     color: '#333',
+  },
+  instructionsContainer: {
+    marginBottom: 20,
+  },
+  instruction: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    marginBottom: 10,
+    backgroundColor: '#F9F9F9',
+    padding: 10,
+    borderRadius: 5,
+    borderWidth: 1,
+    borderColor: '#ECECEC',
+  },
+  stepNumber: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#FF6347',
+    marginRight: 10,
+  },
+  instructionText: {
+    fontSize: 16,
+    color: '#333',
+  },
+  fab: {
+    position: 'absolute',
+    right: 20,
+    bottom: 20,
+    backgroundColor: '#FF6347',
+    borderRadius: 30,
+    padding: 15,
+    justifyContent: 'center',
+    alignItems: 'center',
+    elevation: 5,
   },
   errorMessage: {
     fontSize: 16,
