@@ -13,6 +13,7 @@ import FingerPrint from "./components/Onboarding/FingerPrint";
 import RepicesDetails from "./components/RepicesDetails.js/RepicesDetails";
 import ChatBot from "./Screens/ChatBot/ChatBot";
 import { MaterialIcons } from '@expo/vector-icons';
+import CommentsScreen from "./components/CommentScreen.js/CommentsScreen";
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -155,6 +156,11 @@ const HomeStack = () => {
       <Stack.Screen
         name="RepicesDetails"
         component={RepicesDetails}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="CommentsScreen"
+        component={CommentsScreen}
         options={{ headerShown: false }}
       />
     </Stack.Navigator>

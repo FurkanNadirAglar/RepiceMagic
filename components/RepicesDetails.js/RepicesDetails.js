@@ -64,17 +64,17 @@ const RecipeDetails = ({ route }) => {
           </View>
           <Text style={styles.sectionTitle}>Instructions</Text>
           <View style={styles.instructionsContainer}>
-            {getInstructions(recipeDetails.strInstructions).map((step, index) => (
-              <View key={index} style={styles.instruction}>
-                <Text style={styles.stepNumber}>{index + 1}</Text>
-                <Text style={styles.instructionText}>{step}</Text>
-              </View>
-            ))}
+          {getInstructions(recipeDetails.strInstructions).map((step, index) => (
+        <View key={index} style={styles.instruction}>
+          <Text style={styles.stepNumber}>{index + 1}</Text>
+          <Text style={styles.instructionText}>{step}</Text>
+        </View>
+      ))}
           </View>
         </View>
       </ScrollView>
-      <TouchableOpacity style={styles.fab}>
-        <Ionicons name="heart-outline" size={24} color="#FFF" />
+      <TouchableOpacity style={styles.fab} onPress={() => navigation.navigate('CommentsScreen')}>
+        <Ionicons name="chatbubble-ellipses-outline" size={24} color="#FFF" />
       </TouchableOpacity>
     </View>
   );
@@ -95,9 +95,10 @@ const getIngredients = (recipeDetails) => {
 };
 
 const getInstructions = (instructions) => {
-  return instructions.split('\n').filter(instruction => instruction);
+  return instructions
+    .split('. ')
+    .filter((instruction) => instruction !== null && instruction.trim() !== '');
 };
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -164,15 +165,16 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#333',
   },
-  instructionsContainer: {
-    marginBottom: 20,
+   instructionsContainer: {
+    padding: 16,
+    backgroundColor: '#fff',
   },
   instruction: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    marginBottom: 10,
+    marginBottom: 8,
     backgroundColor: '#F9F9F9',
-    padding: 10,
+    padding:20,
     borderRadius: 5,
     borderWidth: 1,
     borderColor: '#ECECEC',
@@ -186,6 +188,7 @@ const styles = StyleSheet.create({
   instructionText: {
     fontSize: 16,
     color: '#333',
+    flex: 1,
   },
   fab: {
     position: 'absolute',
