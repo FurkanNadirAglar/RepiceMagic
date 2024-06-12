@@ -3,11 +3,13 @@ import { View, Text, Image, StyleSheet, ActivityIndicator, TouchableOpacity } fr
 import { ScrollView } from 'react-native-gesture-handler';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const RecipeDetails = ({ route }) => {
   const { idMeal } = route.params;
   const [recipeDetails, setRecipeDetails] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [isFavorite, setIsFavorite] = useState(false);
   const navigation = useNavigation();
 
   useEffect(() => {
@@ -25,6 +27,46 @@ const RecipeDetails = ({ route }) => {
 
     fetchRecipeDetails();
   }, [idMeal]);
+
+  useEffect(() => {
+    const checkIfFavorite = async () => {
+      try {
+        const favorites = await AsyncStorage.getItem('favorites');
+        if (favorites) {
+          const parsedFavorites = JSON.parse(favorites);
+          const isFavorite = parsedFavorites.some((item) => item.idMeal === idMeal);
+          setIsFavorite(isFavorite);
+        }
+      } catch (error) {
+        console.error('Error checking if recipe is favorite: ', error);
+      }
+    };
+
+    checkIfFavorite();
+  }, [idMeal]);
+
+  const toggleFavorite = async () => {
+    try {
+      let favorites = await AsyncStorage.getItem('favorites');
+      if (!favorites) {
+        favorites = [];
+      } else {
+        favorites = JSON.parse(favorites);
+      }
+
+      if (isFavorite) {
+        favorites = favorites.filter((item) => item.idMeal !== idMeal);
+        setIsFavorite(false);
+      } else {
+        favorites.push(recipeDetails);
+        setIsFavorite(true);
+      }
+
+      await AsyncStorage.setItem('favorites', JSON.stringify(favorites));
+    } catch (error) {
+      console.error('Error toggling favorite: ', error);
+    }
+  };
 
   if (loading) {
     return (
@@ -49,27 +91,34 @@ const RecipeDetails = ({ route }) => {
           <Ionicons name="arrow-back" size={24} color="#FFF" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>{recipeDetails.strMeal}</Text>
+        <TouchableOpacity style={styles.favoriteButton} onPress={toggleFavorite}>
+          <Ionicons name={isFavorite ? 'heart' : 'heart-outline'} size={24} color="#FFF" />
+        </TouchableOpacity>
       </View>
       <ScrollView style={styles.scrollContainer}>
-        <Image source={{ uri: recipeDetails.strMealThumb }} style={styles.image} />
+        <View style={styles.imageContainer}>
+          <Image source={{ uri: recipeDetails.strMealThumb }} style={styles.image} />
+        </View>
         <View style={styles.detailsContainer}>
           <Text style={styles.sectionTitle}>Ingredients</Text>
           <View style={styles.ingredientsContainer}>
             {getIngredients(recipeDetails).map((ingredient, index) => (
               <View key={index} style={styles.ingredient}>
-                <Ionicons name="checkmark-circle" size={24} color="#FF6347" style={{ marginRight: 10 }} />
+                <View style={styles.ingredientBullet} />
                 <Text style={styles.ingredientText}>{ingredient}</Text>
               </View>
             ))}
           </View>
           <Text style={styles.sectionTitle}>Instructions</Text>
           <View style={styles.instructionsContainer}>
-          {getInstructions(recipeDetails.strInstructions).map((step, index) => (
-        <View key={index} style={styles.instruction}>
-          <Text style={styles.stepNumber}>{index + 1}</Text>
-          <Text style={styles.instructionText}>{step}</Text>
-        </View>
-      ))}
+            {getInstructions(recipeDetails.strInstructions).map((step, index) => (
+              <View key={index} style={styles.instruction}>
+                <View style={styles.stepCircle}>
+                  <Text style={styles.stepNumber}>{index + 1}</Text>
+                </View>
+                <Text style={styles.instructionText}>{step}</Text>
+              </View>
+            ))}
           </View>
         </View>
       </ScrollView>
@@ -99,6 +148,8 @@ const getInstructions = (instructions) => {
     .split('. ')
     .filter((instruction) => instruction !== null && instruction.trim() !== '');
 };
+
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -107,21 +158,35 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between',
     backgroundColor: '#FF6347',
     paddingTop: 40,
     paddingBottom: 10,
     paddingHorizontal: 20,
+    borderBottomLeftRadius: 20,
+    borderBottomRightRadius: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.8,
+    shadowRadius: 2,
+    elevation: 5,
   },
   backButton: {
     marginRight: 10,
   },
+  favoriteButton: {
+    marginLeft: 10,
+  },
   headerTitle: {
-    fontSize: 20,
+    fontSize: 24,
     color: '#FFF',
     fontWeight: 'bold',
+    flex: 1,
+    textAlign: 'center',
   },
   scrollContainer: {
     flex: 1,
+    backgroundColor: '#F5F5F5',
   },
   loadingContainer: {
     flex: 1,
@@ -129,16 +194,28 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#FFF',
   },
+  imageContainer: {
+    alignItems: 'center',
+    marginVertical: 20,
+  },
   image: {
-    width: '100%',
+    width: '90%',
     height: 250,
     resizeMode: 'cover',
-    borderBottomLeftRadius: 20,
-    borderBottomRightRadius: 20,
-    marginBottom: 20,
+    borderRadius: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 5 },
+    shadowOpacity: 0.8,
+    shadowRadius: 10,
+    elevation: 10,
   },
   detailsContainer: {
     padding: 20,
+    backgroundColor: '#FFF',
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    elevation: 3,
+    marginBottom: 20,
   },
   sectionTitle: {
     fontSize: 24,
@@ -155,35 +232,57 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 10,
-    backgroundColor: '#F9F9F9',
+    backgroundColor: '#FFF',
     padding: 10,
-    borderRadius: 5,
+    borderRadius: 10,
     borderWidth: 1,
     borderColor: '#ECECEC',
+    elevation: 1,
+  },
+  ingredientBullet: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    backgroundColor: '#FF6347',
+    marginRight: 10,
   },
   ingredientText: {
     fontSize: 16,
     color: '#333',
   },
-   instructionsContainer: {
+  instructionsContainer: {
     padding: 16,
-    backgroundColor: '#fff',
+    backgroundColor: '#FFF',
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#ECECEC',
+    elevation: 1,
   },
   instruction: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    marginBottom: 8,
-    backgroundColor: '#F9F9F9',
-    padding:20,
-    borderRadius: 5,
+    marginBottom: 15,
+    paddingVertical: 10,
+    paddingHorizontal: 15,
+    backgroundColor: '#FAFAFA',
+    borderRadius: 10,
     borderWidth: 1,
     borderColor: '#ECECEC',
+    elevation: 1,
+  },
+  stepCircle: {
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    backgroundColor: '#FF6347',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 10,
   },
   stepNumber: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: 'bold',
-    color: '#FF6347',
-    marginRight: 10,
+    color: '#FFF',
   },
   instructionText: {
     fontSize: 16,

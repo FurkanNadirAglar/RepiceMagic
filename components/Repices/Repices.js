@@ -50,7 +50,7 @@ const Recipes = ({ selectedCategory }) => {
       <View style={styles.container}>
         <Text style={styles.title}>Recipes</Text>
         {loading ? (
-          <ActivityIndicator size="large" color="gray" />
+          <ActivityIndicator size="large" color="#FF6347" />
         ) : (
           <View style={styles.recipesContainer}>{renderRecipes()}</View>
         )}
@@ -68,6 +68,8 @@ const styles = StyleSheet.create({
     fontSize: 25,
     marginLeft: 10,
     marginBottom: 10,
+    color: "#FF6347",
+    fontWeight: "bold",
   },
   recipesContainer: {
     flexDirection: "row",
@@ -77,9 +79,9 @@ const styles = StyleSheet.create({
   card: {
     width: "48%",
     marginBottom: 10,
-    borderRadius: 10,
-    backgroundColor: "#fff",
-    elevation: 3,
+    borderRadius: 15,
+    backgroundColor: "#F5F5F5",
+    elevation: 5,
     shadowColor: "#000",
     shadowOffset: {
       width: 0,
@@ -91,16 +93,18 @@ const styles = StyleSheet.create({
   recipeImage: {
     width: "100%",
     height: 200,
-    borderTopLeftRadius: 10,
-    borderTopRightRadius: 10,
+    borderTopLeftRadius: 15,
+    borderTopRightRadius: 15,
   },
   cardContent: {
-    padding: 10,
+    padding: 15,
   },
   recipeName: {
     fontSize: 16,
     textAlign: "center",
     marginTop: 10,
+    fontWeight: "bold",
+    color: "#333",
   },
 });
 

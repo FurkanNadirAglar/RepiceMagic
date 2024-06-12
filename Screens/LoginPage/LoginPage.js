@@ -7,10 +7,9 @@ import {
   StyleSheet,
   Image,
 } from "react-native";
-import { Feather } from "@expo/vector-icons"; // Bu kısmı düzenle, kullanılan icon setine göre
+import { Feather } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
-import { db } from "../../config/firebaseconfig"; // Firestore bağlantısını buraya ekleyin
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 
 const LoginPage = () => {
   const [secureTextEntry, setSecureTextEntry] = useState(true);
@@ -34,16 +33,7 @@ const LoginPage = () => {
 
   return (
     <View style={styles.container}>
-      <Text
-        style={{
-          marginBottom: 100,
-          fontSize: 25,
-          color: "#F8F8F8",
-          fontWeight: "bold",
-        }}
-      >
-        Log In
-      </Text>
+      <Text style={styles.headerText}>Log In</Text>
       <View style={styles.loginContainer}>
         <Text style={styles.title}>Welcome</Text>
         <View style={styles.inputContainer}>
@@ -53,6 +43,7 @@ const LoginPage = () => {
             placeholder="Enter your email"
             value={email}
             onChangeText={(text) => setEmail(text)}
+            placeholderTextColor="#888"
           />
           <Text style={styles.inputLabel}>Password</Text>
           <View style={styles.passwordInputContainer}>
@@ -62,11 +53,9 @@ const LoginPage = () => {
               secureTextEntry={secureTextEntry}
               value={password}
               onChangeText={(text) => setPassword(text)}
+              placeholderTextColor="#888"
             />
-            <TouchableOpacity
-              onPress={toggleSecureEntry}
-              style={styles.toggleIcon}
-            >
+            <TouchableOpacity onPress={toggleSecureEntry} style={styles.toggleIcon}>
               <Feather
                 name={secureTextEntry ? "eye" : "eye-off"}
                 size={24}
@@ -96,7 +85,6 @@ const LoginPage = () => {
             />
           </TouchableOpacity>
         </View>
-
         <TouchableOpacity onPress={() => navigation.navigate("SignupScreen")}>
           <Text style={styles.signUpText}>Don't have an account? Sign Up</Text>
         </TouchableOpacity>
@@ -110,12 +98,18 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "flex-end",
     alignItems: "center",
-    backgroundColor: "#F5CB58",
+    backgroundColor: "#121212",
+  },
+  headerText: {
+    marginBottom: 100,
+    fontSize: 30,
+    color: "#fff",
+    fontWeight: "bold",
   },
   loginContainer: {
     width: "100%",
     height: "75%",
-    backgroundColor: "#fff",
+    backgroundColor: "#1E1E1E",
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     padding: 20,
@@ -132,7 +126,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: "bold",
     marginBottom: 20,
-    textAlign: "left",
+    color: "#fff",
   },
   inputContainer: {
     marginBottom: 20,
@@ -140,14 +134,15 @@ const styles = StyleSheet.create({
   inputLabel: {
     fontSize: 16,
     marginBottom: 5,
-    color: "#333",
+    color: "#bbb",
     fontWeight: "bold",
   },
   input: {
-    backgroundColor: "#F3E9B5",
+    backgroundColor: "#2E2E2E",
     borderRadius: 15,
     padding: 10,
     marginBottom: 10,
+    color: "#fff",
   },
   passwordInputContainer: {
     flexDirection: "row",
@@ -156,10 +151,11 @@ const styles = StyleSheet.create({
   },
   passwordInput: {
     flex: 1,
-    backgroundColor: "#F3E9B5",
+    backgroundColor: "#2E2E2E",
     borderRadius: 15,
     padding: 10,
     marginBottom: 10,
+    color: "#fff",
   },
   toggleIcon: {
     position: "absolute",
@@ -188,28 +184,24 @@ const styles = StyleSheet.create({
   orText: {
     textAlign: "center",
     marginTop: 40,
-    color: "black",
+    color: "#888",
     marginVertical: 5,
   },
   icons: {
-    flexDirection: "row", // İkonları yatay olarak hizalamak için
-    alignItems: "center", // İkonları dikey olarak hizalamak için
+    flexDirection: "row",
+    alignItems: "center",
     alignSelf: "center",
   },
   icon: {
     width: 40,
     height: 40,
-    marginHorizontal: 5, // İkonlar arasındaki boşluğu ayarlamak için
+    marginHorizontal: 5,
   },
   signUpText: {
-    marginTop: 10, // Google iconundan metne bir boşluk oluşturmak için
+    marginTop: 10,
     color: "#E95322",
     fontWeight: "bold",
-    alignSelf:"center"
-  },
-  googleIcon: {
-    width: 40,
-    height: 40,
+    alignSelf: "center",
   },
 });
 

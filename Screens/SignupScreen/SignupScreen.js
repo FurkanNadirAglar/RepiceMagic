@@ -10,8 +10,8 @@ import {
   TouchableOpacity,
   StyleSheet,
   Image,
-} from "react-native";// Bu kısmı düzenle, kullanılan icon setine göre
-import { Feather } from "@expo/vector-icons"; // Bu kısmı düzenle, kullanılan icon setine göre
+} from "react-native";
+import { Feather } from "@expo/vector-icons";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCyJakMMiEiKwFVwUHSGzGIM8oDNaF3d4M",
@@ -59,16 +59,7 @@ const SignupScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Text
-        style={{
-          marginBottom: 100,
-          fontSize: 25,
-          color: "#F8F8F8",
-          fontWeight: "bold",
-        }}
-      >
-        New Account
-      </Text>
+      <Text style={styles.headerText}>New Account</Text>
       <View style={styles.signupContainer}>
         <View style={styles.inputContainer}>
           <Text style={styles.inputLabel}>Username</Text>
@@ -77,6 +68,7 @@ const SignupScreen = () => {
             placeholder="Enter your username"
             value={username}
             onChangeText={(text) => setUsername(text)}
+            placeholderTextColor="#888"
           />
           <Text style={styles.inputLabel}>Telephone Number</Text>
           <TextInput
@@ -85,6 +77,7 @@ const SignupScreen = () => {
             keyboardType="phone-pad"
             value={phoneNumber}
             onChangeText={(text) => setPhoneNumber(text)}
+            placeholderTextColor="#888"
           />
           <Text style={styles.inputLabel}>Email</Text>
           <TextInput
@@ -92,6 +85,7 @@ const SignupScreen = () => {
             placeholder="Enter your email"
             value={email}
             onChangeText={(text) => setEmail(text)}
+            placeholderTextColor="#888"
           />
           <Text style={styles.inputLabel}>Password</Text>
           <View style={styles.passwordInputContainer}>
@@ -101,11 +95,9 @@ const SignupScreen = () => {
               secureTextEntry={secureTextEntry}
               value={password}
               onChangeText={(text) => setPassword(text)}
+              placeholderTextColor="#888"
             />
-            <TouchableOpacity
-              onPress={toggleSecureEntry}
-              style={styles.toggleIcon}
-            >
+            <TouchableOpacity onPress={toggleSecureEntry} style={styles.toggleIcon}>
               <Feather
                 name={secureTextEntry ? "eye" : "eye-off"}
                 size={24}
@@ -126,9 +118,7 @@ const SignupScreen = () => {
               style={styles.icon}
             />
           </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => navigation.navigate("FingerPrint")}
-          >
+          <TouchableOpacity onPress={() => navigation.navigate("FingerPrint")}>
             <Image
               source={require("../../assets/login/FingerprintIcon.png")}
               style={styles.icon}
@@ -142,17 +132,24 @@ const SignupScreen = () => {
     </View>
   );
 };
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: "flex-end",
     alignItems: "center",
-    backgroundColor: "#F5CB58",
+    backgroundColor: "#121212",
+  },
+  headerText: {
+    marginBottom: 100,
+    fontSize: 30,
+    color: "#fff",
+    fontWeight: "bold",
   },
   signupContainer: {
     width: "100%",
     height: "75%",
-    backgroundColor: "#fff",
+    backgroundColor: "#1E1E1E",
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     padding: 20,
@@ -171,14 +168,15 @@ const styles = StyleSheet.create({
   inputLabel: {
     fontSize: 16,
     marginBottom: 5,
-    color: "#333",
+    color: "#bbb",
     fontWeight: "bold",
   },
   input: {
-    backgroundColor: "#F3E9B5",
+    backgroundColor: "#2E2E2E",
     borderRadius: 15,
     padding: 10,
     marginBottom: 10,
+    color: "#fff",
   },
   passwordInputContainer: {
     flexDirection: "row",
@@ -187,25 +185,16 @@ const styles = StyleSheet.create({
   },
   passwordInput: {
     flex: 1,
-    backgroundColor: "#F3E9B5",
+    backgroundColor: "#2E2E2E",
     borderRadius: 15,
     padding: 10,
     marginBottom: 10,
+    color: "#fff",
   },
   toggleIcon: {
     position: "absolute",
     right: 10,
     top: 12,
-  },
-  icons: {
-    flexDirection: "row",
-    alignItems: "center",
-    alignSelf: "center",
-  },
-  icon: {
-    width: 40,
-    height: 40,
-    marginHorizontal: 5,
   },
   button: {
     backgroundColor: "#E95322",
@@ -222,8 +211,18 @@ const styles = StyleSheet.create({
   orText: {
     textAlign: "center",
     marginTop: 40,
-    color: "black",
+    color: "#888",
     marginVertical: 5,
+  },
+  icons: {
+    flexDirection: "row",
+    alignItems: "center",
+    alignSelf: "center",
+  },
+  icon: {
+    width: 40,
+    height: 40,
+    marginHorizontal: 5,
   },
   loginText: {
     marginTop: 10,
@@ -232,4 +231,5 @@ const styles = StyleSheet.create({
     alignSelf: "center",
   },
 });
+
 export default SignupScreen;

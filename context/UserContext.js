@@ -1,4 +1,3 @@
-// UserContext.js
 import React, { createContext, useState, useEffect } from 'react';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 
@@ -10,11 +9,7 @@ export const UserProvider = ({ children }) => {
   useEffect(() => {
     const auth = getAuth();
     const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        setUser(user);
-      } else {
-        setUser(null);
-      }
+      setUser(user);
     });
 
     return () => unsubscribe();
