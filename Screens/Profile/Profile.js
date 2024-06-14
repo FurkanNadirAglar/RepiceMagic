@@ -1,53 +1,68 @@
-import React from 'react';
-import { View, Text, Image, FlatList, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, Image, StyleSheet, TouchableOpacity, ScrollView, Platform } from 'react-native';
+import * as ImagePicker from 'expo-image-picker';
 import { useNavigation } from '@react-navigation/native';
 
 export default function Profile() {
   const navigation = useNavigation();
+  const [profileImage, setProfileImage] = useState(null);
 
   const user = {
     name: "John Doe",
     bio: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio. Praesent libero. Sed cursus ante dapibus diam.",
-    favorites: [
-      { id: '1', title: 'Favorite 1' },
-      { id: '2', title: 'Favorite 2' },
-      { id: '3', title: 'Favorite 3' },
-      // Daha fazla favori öğesi eklenebilir
-    ]
+    email: "john.doe@example.com",
+    phone: "123-456-7890",
+    address: "123 Main St, Anytown, USA"
+  };
+
+  const pickImage = async () => {
+    if (Platform.OS !== 'web') {
+      const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (status !== 'granted') {
+        alert('Sorry, we need camera roll permissions to make this work!');
+        return;
+      }
+    }
+
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 1,
+    });
+
+    if (!result.canceled) {
+      setProfileImage(result.uri);
+    }
   };
 
   return (
     <ScrollView style={styles.container}>
-      <View style={styles.profileSection}>
-        <View style={styles.profileImageContainer}>
-          <Image source={{ uri: user.profileImage }} style={styles.profileImage} />
-        </View>
+      <View style={styles.header}>
+        <TouchableOpacity onPress={pickImage} style={styles.profileImageContainer}>
+          <Image 
+           // source={profileImage ? { uri: profileImage } : require('./default-profile.png')} 
+            style={styles.profileImage} 
+          />
+        </TouchableOpacity>
         <Text style={styles.name}>{user.name}</Text>
         <Text style={styles.bio}>{user.bio}</Text>
-        <TouchableOpacity 
-          style={styles.button} 
-          onPress={() => navigation.navigate('Favorites')}
-        >
-          <Text style={styles.buttonText}>Go to Favorites</Text>
-        </TouchableOpacity>
+      </View>
+      <View style={styles.infoSection}>
+        <Text style={styles.infoLabel}>Email</Text>
+        <Text style={styles.info}>{user.email}</Text>
+        <Text style={styles.infoLabel}>Phone</Text>
+        <Text style={styles.info}>{user.phone}</Text>
+        <Text style={styles.infoLabel}>Address</Text>
+        <Text style={styles.info}>{user.address}</Text>
+      </View>
+      <View style={styles.buttonContainer}>
         <TouchableOpacity 
           style={styles.button} 
           onPress={() => navigation.navigate('Settings')}
         >
           <Text style={styles.buttonText}>Settings</Text>
         </TouchableOpacity>
-      </View>
-      <View style={styles.favoritesSection}>
-        <Text style={styles.sectionTitle}>Recent Favorites</Text>
-        <FlatList
-          data={user.favorites}
-          keyExtractor={(item) => item.id}
-          renderItem={({ item }) => (
-            <View style={styles.favoriteItem}>
-              <Text style={styles.favoriteTitle}>{item.title}</Text>
-            </View>
-          )}
-        />
       </View>
     </ScrollView>
   );
@@ -56,66 +71,71 @@ export default function Profile() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#f8f9fa',
   },
-  profileSection: {
+  header: {
     alignItems: 'center',
-    padding: 100,
-    backgroundColor: '#f2f2f2',
+    padding: 30,
+    backgroundColor: '#343a40',
     borderBottomWidth: 1,
-    borderBottomColor: '#ddd',
+    borderBottomColor: '#ced4da',
+    marginBottom: 20,
   },
   profileImageContainer: {
-    borderWidth: 2,
-    borderColor: '#ddd',
-    borderRadius: 50,
-    padding: 2,
-    marginBottom: 10,
+    borderWidth: 3,
+    borderColor: '#ced4da',
+    borderRadius: 75,
+    padding: 3,
+    marginBottom: 20,
   },
   profileImage: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
+    width: 150,
+    height: 150,
+    borderRadius: 75,
   },
   name: {
-    fontSize: 24,
+    fontSize: 26,
     fontWeight: 'bold',
+    color: '#ffffff',
     marginBottom: 10,
   },
   bio: {
     fontSize: 16,
-    color: '#666',
+    color: '#e9ecef',
     textAlign: 'center',
-    marginBottom: 20,
+    marginHorizontal: 20,
   },
-  button: {
-    backgroundColor: '#007BFF',
-    padding: 10,
-    borderRadius: 5,
-    marginVertical: 5,
-    width: '80%',
-    alignItems: 'center',
+  infoSection: {
+    paddingHorizontal: 30,
+    paddingBottom: 30,
   },
-  buttonText: {
-    color: '#fff',
+  infoLabel: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#495057',
+    marginTop: 20,
+  },
+  info: {
     fontSize: 16,
-    fontWeight: 'bold',
-  },
-  favoritesSection: {
-    padding: 20,
-  },
-  sectionTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
+    color: '#343a40',
     marginBottom: 10,
   },
-  favoriteItem: {
-    backgroundColor: '#f9f9f9',
-    padding: 10,
-    marginVertical: 5,
-    borderRadius: 5,
+  buttonContainer: {
+    alignItems: 'center',
+    marginVertical: 20,
   },
-  favoriteTitle: {
-    fontSize: 18,
+  button: {
+    backgroundColor: '#007bff',
+    paddingVertical: 15,
+    paddingHorizontal: 40,
+    borderRadius: 10,
+    width: '80%',
+    alignItems: 'center',
+    elevation: 3,
+  },
+  buttonText: {
+    color: '#ffffff',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
 });

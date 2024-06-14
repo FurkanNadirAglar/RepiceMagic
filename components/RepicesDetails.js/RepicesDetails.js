@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, Image, StyleSheet, ActivityIndicator, TouchableOpacity } from 'react-native';
+import { View, Text, Image, StyleSheet, ActivityIndicator, TouchableOpacity, Linking } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
@@ -68,6 +68,14 @@ const RecipeDetails = ({ route }) => {
     }
   };
 
+  const handleWatchVideo = () => {
+    if (recipeDetails.strYoutube) {
+      Linking.openURL(recipeDetails.strYoutube);
+    } else {
+      console.warn('No video available for this recipe.');
+    }
+  };
+
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
@@ -122,6 +130,11 @@ const RecipeDetails = ({ route }) => {
           </View>
         </View>
       </ScrollView>
+      {recipeDetails.strYoutube && (
+        <TouchableOpacity style={styles.videoButton} onPress={handleWatchVideo}>
+          <Ionicons name="play-circle-outline" size={32} color="#FFF" />
+        </TouchableOpacity>
+      )}
       <TouchableOpacity style={styles.fab} onPress={() => navigation.navigate('CommentsScreen')}>
         <Ionicons name="chatbubble-ellipses-outline" size={24} color="#FFF" />
       </TouchableOpacity>
@@ -148,7 +161,6 @@ const getInstructions = (instructions) => {
     .split('. ')
     .filter((instruction) => instruction !== null && instruction.trim() !== '');
 };
-
 
 const styles = StyleSheet.create({
   container: {
@@ -296,6 +308,17 @@ const styles = StyleSheet.create({
     backgroundColor: '#FF6347',
     borderRadius: 30,
     padding: 15,
+    justifyContent: 'center',
+    alignItems: 'center',
+    elevation: 5,
+  },
+  videoButton: {
+    position: 'absolute',
+    right: 20,
+    bottom: 100,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    borderRadius: 30,
+    padding: 10,
     justifyContent: 'center',
     alignItems: 'center',
     elevation: 5,
