@@ -10,6 +10,8 @@ import {
   TouchableOpacity,
   KeyboardAvoidingView,
   Platform,
+  Modal,
+  ScrollView,
 } from "react-native";
 import { LinearGradient } from 'expo-linear-gradient';
 import * as Speech from "expo-speech";
@@ -23,6 +25,7 @@ const GeminiChat = () => {
   const [loading, setLoading] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [showStopIcon, setShowStopIcon] = useState(false);
+  const [showHistory, setShowHistory] = useState(false);
 
   const API_KEY = "AIzaSyCOi3C0XgCRXBVOsq3J8DuVtYCJsFFbyvw";
 
@@ -33,7 +36,7 @@ const GeminiChat = () => {
       const prompt = "hello! ";
       const result = await model.generateContent(prompt);
       const response = result.response;
-      const text = response.text();
+      const text = response.text().replace(/\*\*/g, ''); // Clean the text
       console.log(text);
       showMessage({
         message: "Ask Me for Magic Recipes 🤖",
@@ -62,15 +65,15 @@ const GeminiChat = () => {
   const sendMessage = async () => {
     setLoading(true);
     const userMessage = { text: userInput, user: true };
-    setMessages([userMessage, ...messages]); // Add user message to the beginning
+    setMessages([...messages, userMessage]); // Add user message to the end
 
     const genAI = new GoogleGenerativeAI.GoogleGenerativeAI(API_KEY);
     const model = genAI.getGenerativeModel({ model: "gemini-pro" });
     const prompt = userMessage.text;
     const result = await model.generateContent(prompt);
     const response = result.response;
-    const text = response.text();
-    setMessages([{ text, user: false }, ...messages]); // Add bot message to the beginning
+    const text = response.text().replace(/\*\*/g, ''); // Clean the text
+    setMessages([...messages, userMessage, { text, user: false }]); // Add bot message to the end
     setLoading(false);
     setUserInput("");
 
@@ -97,7 +100,7 @@ const GeminiChat = () => {
       setIsSpeaking(false);
       setShowStopIcon(false);
     } else if (messages.length > 0) {
-      const lastMessage = messages[0].text;
+      const lastMessage = messages[messages.length - 1].text;
       Speech.speak(lastMessage, {
         onDone: () => {
           setIsSpeaking(false);
@@ -134,13 +137,15 @@ const GeminiChat = () => {
     >
       <LinearGradient colors={['#1a2a6c', '#b21f1f', '#fdbb2d']} style={styles.gradient}>
         <View style={styles.header}>
+          <TouchableOpacity onPress={() => setShowHistory(true)} style={styles.historyButton}>
+            <Text style={styles.historyButtonText}>History</Text>
+          </TouchableOpacity>
           <Text style={styles.headerText}>Magic Chat</Text>
         </View>
         <FlatList
           data={messages}
           renderItem={renderMessage}
           keyExtractor={(item, index) => index.toString()}
-          inverted // Ensure new messages appear at the top
           contentContainerStyle={styles.messagesContainer}
         />
         <View style={styles.inputContainer}>
@@ -174,6 +179,28 @@ const GeminiChat = () => {
         </View>
         <FlashMessage position="top" />
       </LinearGradient>
+      
+      {/* Modal for displaying message history */}
+      <Modal
+        visible={showHistory}
+        animationType="slide"
+        onRequestClose={() => setShowHistory(false)}
+      >
+        <View style={styles.modalContainer}>
+          <ScrollView contentContainerStyle={styles.scrollViewContent}>
+            {messages.map((msg, index) => (
+              <View key={index} style={[styles.messageContainer, msg.user ? styles.userMessageContainer : styles.botMessageContainer]}>
+                <Text style={[styles.messageText, msg.user && styles.userMessage]}>
+                  {msg.text}
+                </Text>
+              </View>
+            ))}
+          </ScrollView>
+          <TouchableOpacity style={styles.closeButton} onPress={() => setShowHistory(false)}>
+            <Text style={styles.closeButtonText}>Close</Text>
+          </TouchableOpacity>
+        </View>
+      </Modal>
     </KeyboardAvoidingView>
   );
 };
@@ -182,10 +209,22 @@ const styles = StyleSheet.create({
   container: { flex: 1 },
   gradient: { flex: 1 },
   header: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     padding: 15,
     backgroundColor: "rgba(0,0,0,0.5)",
     borderBottomWidth: 1,
     borderBottomColor: "#444",
+  },
+  historyButton: {
+    padding: 10,
+    backgroundColor: "#4a90e2",
+    borderRadius: 20,
+  },
+  historyButtonText: {
+    color: "#fff",
+    fontSize: 16,
   },
   headerText: { color: "#fff", fontSize: 24, textAlign: "center", fontWeight: 'bold' },
   messagesContainer: { padding: 10, paddingBottom: 80 },
@@ -263,6 +302,25 @@ const styles = StyleSheet.create({
   },
   loadingIndicator: {
     marginLeft: 10,
+  },
+  modalContainer: {
+    flex: 1,
+    backgroundColor: "#1a2a6c",
+    paddingTop: 50,
+  },
+  scrollViewContent: {
+    padding: 20,
+  },
+  closeButton: {
+    backgroundColor: "#e74c3c",
+    padding: 10,
+    borderRadius: 20,
+    alignItems: "center",
+    margin: 20,
+  },
+  closeButtonText: {
+    color: "#fff",
+    fontSize: 16,
   },
 });
 

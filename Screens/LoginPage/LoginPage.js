@@ -10,12 +10,14 @@ import {
 import { Feather } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import { useAuth } from '../../context/UserContext'; // Adjust the path as necessary
 
 const LoginPage = () => {
   const [secureTextEntry, setSecureTextEntry] = useState(true);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigation = useNavigation();
+  const { setUsername } = useAuth(); // Access setUsername from context
 
   const toggleSecureEntry = () => {
     setSecureTextEntry(!secureTextEntry);
@@ -24,7 +26,8 @@ const LoginPage = () => {
   const handleLogin = async () => {
     try {
       const auth = getAuth();
-      await signInWithEmailAndPassword(auth, email, password);
+      await signInWithEmailAndPassword(auth, email, password);  
+      setUsername(email);
       navigation.navigate("Home");
     } catch (error) {
       console.error("Login error:", error.message);

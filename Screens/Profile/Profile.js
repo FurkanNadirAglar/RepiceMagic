@@ -2,15 +2,17 @@ import React, { useState } from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity, ScrollView, Platform, Animated, Easing } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { useNavigation } from '@react-navigation/native';
+import { useAuth } from '../../context/UserContext'; // Adjust the path as necessary
 
 export default function Profile() {
   const navigation = useNavigation();
   const [profileImage, setProfileImage] = useState(null);
+  const { username } = useAuth(); // Access username from context
 
   const user = {
     name: "John Doe",
     bio: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio. Praesent libero. Sed cursus ante dapibus diam.",
-    email: "john.doe@example.com",
+    email: username,
     phone: "123-456-7890",
     address: "123 Main St, Anytown, USA"
   };
@@ -67,7 +69,7 @@ export default function Profile() {
             style={styles.profileImage} 
           />
         </TouchableOpacity>
-        <Text style={styles.name}>{user.name}</Text>
+        <Text style={styles.name}>{username}</Text>
         <Text style={styles.bio}>{user.bio}</Text>
       </View>
       <View style={styles.infoSection}>

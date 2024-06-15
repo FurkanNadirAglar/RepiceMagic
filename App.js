@@ -14,7 +14,7 @@ import RepicesDetails from "./components/RepicesDetails.js/RepicesDetails";
 import ChatBot from "./Screens/ChatBot/ChatBot";
 import { MaterialIcons } from '@expo/vector-icons';
 import CommentsScreen from "./components/CommentScreen.js/CommentsScreen";
-import { UserProvider } from './context/UserContext';
+import { AuthProvider } from './context/UserContext';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -36,6 +36,7 @@ const App = () => {
   };
 
   return (
+    <AuthProvider>
     <NavigationContainer>
       {showSplash ? (
         <View style={styles.splashContainer}>
@@ -62,6 +63,7 @@ const App = () => {
         </Stack.Navigator>
       )}
     </NavigationContainer>
+    </AuthProvider>
   );
 };
 

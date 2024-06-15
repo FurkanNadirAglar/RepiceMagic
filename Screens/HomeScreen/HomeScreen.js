@@ -2,11 +2,15 @@ import React, { useState, useEffect } from "react";
 import { View, Text, Image, TextInput, FlatList, TouchableOpacity, StyleSheet } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
 import Recipes from "../../components/Repices/Repices";
+import { useAuth } from '../../context/UserContext'; // Adjust the path as necessary
+import { useNavigation } from '@react-navigation/native';
 
 const HomeScreen = () => {
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [searchText, setSearchText] = useState("");
+  const { username } = useAuth(); // Access username from context
+  const navigation = useNavigation();
 
   useEffect(() => {
     fetchCategories();
@@ -21,8 +25,6 @@ const HomeScreen = () => {
       console.error("Error fetching categories: ", error);
     }
   };
-
-  const userName = "John Doe";
 
   const renderCategoryItem = ({ item }) => {
     return (
@@ -47,16 +49,20 @@ const HomeScreen = () => {
   const handleSearch = () => {
     console.log("Search: ", searchText);
   };
-
+  const handleProfilePress = () => {
+    navigation.navigate('Profile'); // Assuming 'Profile' is the name of your profile screen in the navigator
+  };
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Image
-          source={require("../../assets/avatar.png")}
-          style={styles.avatar}
-        />
+       <TouchableOpacity onPress={handleProfilePress}>
+      <Image
+        source={require("../../assets/avatar.png")}
+        style={styles.avatar}
+      />
+    </TouchableOpacity>
         <View style={styles.headerRight}>
-          <Text style={styles.userName}>{userName}</Text>
+          <Text style={styles.userName}>{username}</Text>
           <Icon name="bell" size={25} color="#FFF" style={styles.bellIcon} />
         </View>
       </View>

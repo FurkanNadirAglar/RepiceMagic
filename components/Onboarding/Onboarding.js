@@ -135,6 +135,7 @@ export default Onboarding;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: "#1a1a1a", // Darker background color for text container
   },
   backgroundImage: {
     width,
@@ -143,15 +144,20 @@ const styles = StyleSheet.create({
   overlayContainer: {
     ...StyleSheet.absoluteFillObject,
     justifyContent: "flex-end", // Align at the bottom
+    backgroundColor: "rgba(0, 0, 0, 0.5)", // Dark overlay
   },
   slideTextContainer: {
     alignItems: "center",
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
-    backgroundColor: "white",
+    backgroundColor: "#1a1a1a", // Darker background color for text container
     paddingVertical: 30,
     paddingHorizontal: 20,
     width: "100%",
+    shadowColor: "#fff", // Shadow color for text container
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 10,
   },
   textContainer: {
     alignItems: "center",
@@ -165,14 +171,17 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: "bold",
     marginBottom: 10,
-    color: "#E95322",
+    color: "#E95322", // Primary color for title
+    textShadowColor: "#fff", // Text shadow color
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 2,
   },
   description: {
     fontSize: 16,
-    color: "#333", // Updated color
+    color: "#ccc", // Light color for description text
     textAlign: "center", // Center alignment
     paddingHorizontal: 20, // Add padding horizontally
-    fontWeight:"700"
+    fontWeight: "700",
   },
   backButton: {
     position: "absolute",
@@ -181,43 +190,46 @@ const styles = StyleSheet.create({
     zIndex: 1,
   },
   backButtonText: {
-    color: "red",
+    color: "#E95322", // Primary color for back button text
     fontSize: 16,
     fontWeight: "bold",
   },
   nextButton: {
-    backgroundColor: "#E95322", // Next butonunun arka plan rengi
+    backgroundColor: "#E95322", // Next button background color
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 12,
     marginTop: 20,
-    width:'40%'
+    width: '40%',
+    shadowColor: "#fff", // Shadow color for next button
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 10,
   },
- 
   nextButtonText: {
     color: "#fff",
     fontSize: 20,
     fontWeight: "bold",
-    textAlign:"center"
+    textAlign: "center",
   },
   pageIndicatorContainer: {
     flexDirection: "row",
     justifyContent: "center",
-    marginBottom: 20,
+   
   },
   pageIndicator: {
     width: 8,
     height: 8,
     borderRadius: 4,
-    backgroundColor: "#ccc",
+    backgroundColor: "#666", // Darker background color for inactive page indicator
     marginHorizontal: 4,
   },
   currentPageIndicator: {
-    backgroundColor: "#E95322",
+    backgroundColor: "#E95322", // Primary color for active page indicator
   },
   icon: {
     marginRight: 8,
-    marginBottom:8,
-    fontSize:30
+    marginBottom: 8,
+    fontSize: 30,
   },
 });
