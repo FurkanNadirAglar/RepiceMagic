@@ -15,6 +15,7 @@ import ChatBot from "./Screens/ChatBot/ChatBot";
 import { MaterialIcons } from '@expo/vector-icons';
 import CommentsScreen from "./components/CommentScreen.js/CommentsScreen";
 import { UserProvider } from './context/UserContext';
+
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
@@ -86,62 +87,65 @@ const AuthStack = () => {
   );
 };
 
+
 const HomeTab = () => {
   return (
-    <Tab.Navigator
-      screenOptions={({ route }) => ({
-        tabBarIcon: ({ color }) => {
-          let iconName;
+    <View style={{ flex: 1, backgroundColor: 'black' }}>
+      <Tab.Navigator
+        screenOptions={({ route }) => ({
+          tabBarIcon: ({ color }) => {
+            let iconName;
 
-          if (route.name === 'Home') {
-            iconName = 'home';
-          } else if (route.name === 'Favorite') {
-            iconName = 'favorite';
-          } else if (route.name === 'ChatBot') {
-            iconName = 'android';
-          } else if (route.name === 'Profile') {
-            iconName = 'person';
-          }
+            if (route.name === 'Home') {
+              iconName = 'home';
+            } else if (route.name === 'Favorite') {
+              iconName = 'favorite';
+            } else if (route.name === 'ChatBot') {
+              iconName = 'android';
+            } else if (route.name === 'Profile') {
+              iconName = 'person';
+            }
 
-          return <MaterialIcons name={iconName} size={24} color={color} />;
-        },
-      })}
-      tabBarOptions={{
-        activeTintColor: 'tomato',
-        inactiveTintColor: 'gray',
-        showLabel: false,
-        style: {
-          backgroundColor: '#fff',
-          borderTopWidth: 0,
-          elevation: 10,
-          shadowOpacity: 0.75,
-          shadowRadius: 5,
-          shadowColor: 'rgba(0,0,0,)',
-          shadowOffset: { width: 0, height: 0 }
-        }
-      }}
-    >
-      <Tab.Screen
-        name="Home"
-        component={HomeStack}
-        options={{ headerShown: false }}
-      />
-      <Tab.Screen
-        name="Favorite"
-        component={Favorite}
-        options={{ headerShown: false }}
-      />
-      <Tab.Screen
-        name="ChatBot"
-        component={ChatBot}
-        options={{ headerShown: false }}
-      />
-      <Tab.Screen
-        name="Profile"
-        component={Profile}
-        options={{ headerShown: false }}
-      />
-    </Tab.Navigator>
+            return <MaterialIcons name={iconName} size={24} color={color} />;
+          },
+          tabBarActiveTintColor: '#FF6347',    // Aktif sekme metin rengi
+          tabBarInactiveTintColor: '#555',     // Pasif sekme metin rengi
+          tabBarShowLabel: false, 
+                     // Sekme etiketlerini gösterme
+          tabBarStyle: {
+            backgroundColor: '#1c1c1c',        // Arka plan rengi
+            borderTopWidth: 0,                 // Üst kenar çizgisinin kalınlığı
+            elevation: 10,                     // Android için gölge yükseltme
+            shadowColor: '#000',               // Gölge rengi
+            shadowOpacity: 0.1,                // Gölge opaklığı
+            shadowRadius: 5,                   // Gölge yarıçapı
+            shadowOffset: { width: 0, height: 2 }, // Gölge ofseti
+            borderRadius: 15,                  // Kenar yuvarlaklığı
+          },
+        })}
+      >
+        <Tab.Screen
+          name="Home"
+          component={HomeStack}
+          options={{ headerShown: false }}
+        />
+        <Tab.Screen
+          name="Favorite"
+          component={Favorite}
+          options={{ headerShown: false }}
+        />
+        <Tab.Screen
+          name="ChatBot"
+          component={ChatBot}
+          options={{ headerShown: false }}
+        />
+        <Tab.Screen
+          name="Profile"
+          component={Profile}
+          options={{ headerShown: false }}
+        />
+      </Tab.Navigator>
+    </View>
   );
 };
 

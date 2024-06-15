@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, Image, TextInput, FlatList, TouchableOpacity, StyleSheet } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
-import Repices from "../../components/Repices/Repices";
+import Recipes from "../../components/Repices/Repices";
 
 const HomeScreen = () => {
   const [categories, setCategories] = useState([]);
@@ -14,9 +14,7 @@ const HomeScreen = () => {
 
   const fetchCategories = async () => {
     try {
-      const response = await fetch(
-        "https://www.themealdb.com/api/json/v1/1/categories.php"
-      );
+      const response = await fetch("https://www.themealdb.com/api/json/v1/1/categories.php");
       const data = await response.json();
       setCategories(data.categories);
     } catch (error) {
@@ -47,7 +45,7 @@ const HomeScreen = () => {
   };
 
   const handleSearch = () => {
-    console.log("Arama: ", searchText);
+    console.log("Search: ", searchText);
   };
 
   return (
@@ -59,7 +57,7 @@ const HomeScreen = () => {
         />
         <View style={styles.headerRight}>
           <Text style={styles.userName}>{userName}</Text>
-          <Icon name="bell" size={25} color="#555" style={styles.bellIcon} />
+          <Icon name="bell" size={25} color="#FFF" style={styles.bellIcon} />
         </View>
       </View>
       <Text style={styles.mainTitle}>
@@ -69,6 +67,7 @@ const HomeScreen = () => {
         <View style={styles.searchBox}>
           <TextInput
             placeholder="Search any recipe"
+            placeholderTextColor="#AAA"
             style={styles.searchInput}
             value={searchText}
             onChangeText={(text) => setSearchText(text)}
@@ -86,7 +85,7 @@ const HomeScreen = () => {
         keyExtractor={(item) => item.idCategory}
         renderItem={renderCategoryItem}
       />
-      <Repices selectedCategory={selectedCategory} />
+      <Recipes selectedCategory={selectedCategory} />
     </View>
   );
 };
@@ -94,7 +93,7 @@ const HomeScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#FFF",
+    backgroundColor: "#1c1c1c",
   },
   header: {
     flexDirection: "row",
@@ -115,7 +114,7 @@ const styles = StyleSheet.create({
   userName: {
     fontSize: 18,
     fontWeight: "bold",
-    color: "#333",
+    color: "#FFF",
   },
   bellIcon: {
     marginLeft: 20,
@@ -138,14 +137,15 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     borderWidth: 1,
-    borderColor: "#DDD",
+    borderColor: "#555",
     borderRadius: 25,
-    backgroundColor: "#F5F5F5",
+    backgroundColor: "#333",
     flex: 1,
   },
   searchInput: {
     marginLeft: 10,
     flex: 1,
+    color: "#FFF",
   },
   searchButton: {
     backgroundColor: "#FF6347",
@@ -160,7 +160,7 @@ const styles = StyleSheet.create({
   categoryContainer: {
     alignItems: "center",
     marginRight: 10,
-    backgroundColor: "#FFF",
+    backgroundColor: "#333",
     borderRadius: 10,
     padding: 10,
     shadowColor: "#000",
@@ -179,7 +179,7 @@ const styles = StyleSheet.create({
   },
   categoryText: {
     marginTop: 10,
-    color: "#333",
+    color: "#FFF",
     fontWeight: "bold",
   },
 });

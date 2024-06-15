@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity, ScrollView, Platform } from 'react-native';
+import { View, Text, Image, StyleSheet, TouchableOpacity, ScrollView, Platform, Animated, Easing } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { useNavigation } from '@react-navigation/native';
 
@@ -31,17 +31,39 @@ export default function Profile() {
       quality: 1,
     });
 
-    if (!result.canceled) {
+    if (!result.cancelled) {
       setProfileImage(result.uri);
     }
   };
+
+  // Animation for shimmer effect
+  const animatedValue = new Animated.Value(0);
+
+  const animateShimmer = () => {
+    Animated.timing(animatedValue, {
+      toValue: 1,
+      duration: 1500,
+      easing: Easing.linear,
+      useNativeDriver: false,
+    }).start(() => animateShimmer());
+  };
+
+  React.useEffect(() => {
+    animateShimmer();
+  }, []);
+
+  // Interpolated value for shimmer effect
+  const translateX = animatedValue.interpolate({
+    inputRange: [0, 1],
+    outputRange: [-150, 400],
+  });
 
   return (
     <ScrollView style={styles.container}>
       <View style={styles.header}>
         <TouchableOpacity onPress={pickImage} style={styles.profileImageContainer}>
+          <Animated.View style={[styles.shimmer, { transform: [{ translateX }] }]} />
           <Image 
-           // source={profileImage ? { uri: profileImage } : require('./default-profile.png')} 
             style={styles.profileImage} 
           />
         </TouchableOpacity>
@@ -71,14 +93,14 @@ export default function Profile() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f8f9fa',
+    backgroundColor: '#121212', // Dark mode background color
   },
   header: {
     alignItems: 'center',
-    padding: 30,
-    backgroundColor: '#343a40',
+    paddingVertical: 30,
+    backgroundColor: '#343a40', // Darker header background
     borderBottomWidth: 1,
-    borderBottomColor: '#ced4da',
+    borderBottomColor: '#495057',
     marginBottom: 20,
   },
   profileImageContainer: {
@@ -87,11 +109,21 @@ const styles = StyleSheet.create({
     borderRadius: 75,
     padding: 3,
     marginBottom: 20,
+    position: 'relative',
+  },
+  shimmer: {
+    backgroundColor: '#fff',
+    height: '100%',
+    width: '100%',
+    position: 'absolute',
+    zIndex: 1,
+    opacity: 0.3,
   },
   profileImage: {
     width: 150,
     height: 150,
     borderRadius: 75,
+    zIndex: 2,
   },
   name: {
     fontSize: 26,
@@ -112,12 +144,12 @@ const styles = StyleSheet.create({
   infoLabel: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#495057',
+    color: '#ced4da', // Lighter text color
     marginTop: 20,
   },
   info: {
     fontSize: 16,
-    color: '#343a40',
+    color: '#ffffff', // White text color
     marginBottom: 10,
   },
   buttonContainer: {
@@ -125,7 +157,7 @@ const styles = StyleSheet.create({
     marginVertical: 20,
   },
   button: {
-    backgroundColor: '#007bff',
+    backgroundColor: '#007bff', // Accent color for buttons
     paddingVertical: 15,
     paddingHorizontal: 40,
     borderRadius: 10,

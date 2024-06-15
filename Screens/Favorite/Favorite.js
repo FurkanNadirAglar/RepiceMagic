@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, StyleSheet, TouchableOpacity, Image, TextInput } from 'react-native';
+import { View, Text, FlatList, StyleSheet, TouchableOpacity, Image, TextInput, Animated, Easing } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation, useIsFocused } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
@@ -8,7 +8,7 @@ const Favorite = () => {
   const [favorites, setFavorites] = useState([]);
   const [searchText, setSearchText] = useState('');
   const navigation = useNavigation();
-  const isFocused = useIsFocused(); 
+  const isFocused = useIsFocused();
 
   useEffect(() => {
     const fetchFavorites = async () => {
@@ -23,7 +23,7 @@ const Favorite = () => {
     };
 
     fetchFavorites();
-  }, [isFocused]); 
+  }, [isFocused]);
 
   const removeFromFavorites = async (itemId) => {
     try {
@@ -35,8 +35,12 @@ const Favorite = () => {
     }
   };
 
+  const handlePressItem = (itemId) => {
+    navigation.navigate('RepicesDetails', { idMeal: itemId });
+  };
+
   const renderFavoriteItem = ({ item }) => (
-    <TouchableOpacity style={styles.card} onPress={() => navigation.navigate('RecipeDetails', { idMeal: item.idMeal })}>
+    <TouchableOpacity style={styles.card} onPress={() => handlePressItem(item.idMeal)}>
       <Image source={{ uri: item.strMealThumb }} style={styles.cardImage} />
       <View style={styles.cardContent}>
         <Text style={styles.cardTitle}>{item.strMeal}</Text>
@@ -50,19 +54,40 @@ const Favorite = () => {
 
   const filterFavorites = () => {
     return favorites.filter(item => item.strMeal.toLowerCase().includes(searchText.toLowerCase()));
-  }
+  };
+
+  const animatedValue = new Animated.Value(0);
+
+  const animateEntrance = () => {
+    Animated.timing(animatedValue, {
+      toValue: 1,
+      duration: 500,
+      easing: Easing.out(Easing.exp),
+      useNativeDriver: true,
+    }).start();
+  };
+
+  useEffect(() => {
+    animateEntrance();
+  }, []);
+
+  const translateX = animatedValue.interpolate({
+    inputRange: [0, 1],
+    outputRange: [100, 0],
+  });
 
   return (
     <View style={styles.container}>
-      <View style={styles.searchContainer}>
+      <Animated.View style={[styles.searchContainer, { transform: [{ translateX }] }]}>
         <TextInput
           style={styles.searchInput}
           placeholder="Search favorites"
           onChangeText={text => setSearchText(text)}
           value={searchText}
+          placeholderTextColor="white"
         />
-        <Ionicons name="search" size={24} color="#666" style={styles.searchIcon} />
-      </View>
+        <Ionicons name="search" size={24} color="white" style={styles.searchIcon} />
+      </Animated.View>
       {favorites.length === 0 ? (
         <Text style={styles.emptyMessage}>No favorites yet</Text>
       ) : (
@@ -70,6 +95,7 @@ const Favorite = () => {
           data={filterFavorites()}
           renderItem={renderFavoriteItem}
           keyExtractor={(item) => item.idMeal}
+          contentContainerStyle={styles.flatListContent}
         />
       )}
     </View>
@@ -79,7 +105,7 @@ const Favorite = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFF',
+    backgroundColor: '#121212',
     padding: 20,
   },
   searchContainer: {
@@ -89,19 +115,19 @@ const styles = StyleSheet.create({
   },
   searchInput: {
     flex: 1,
-    backgroundColor: '#F5F5F5',
-    borderRadius: 10,
+    backgroundColor: '#333',
+    borderRadius: 25,
     paddingHorizontal: 15,
-    paddingVertical: 10,
-    marginRight: 10,
+    paddingVertical: 12,
+    color: '#FFF',
   },
   searchIcon: {
-    marginRight: 10,
+    marginLeft: 10,
   },
   card: {
     flexDirection: 'row',
     marginBottom: 20,
-    backgroundColor: '#FFF',
+    backgroundColor: '#333',
     borderRadius: 10,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 5 },
@@ -122,16 +148,16 @@ const styles = StyleSheet.create({
   cardTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#333',
+    color: '#FFF',
   },
   cardCategory: {
     fontSize: 16,
-    color: '#666',
+    color: '#BBB',
   },
   emptyMessage: {
     fontSize: 18,
     textAlign: 'center',
-    color: '#666',
+    color: '#BBB',
     marginTop: 20,
   },
   removeButton: {
@@ -140,6 +166,9 @@ const styles = StyleSheet.create({
     padding: 10,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  flatListContent: {
+    paddingBottom: 20,
   },
 });
 

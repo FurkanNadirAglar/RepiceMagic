@@ -165,13 +165,13 @@ const getInstructions = (instructions) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFF',
+    backgroundColor: '#1c1c1c',
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    backgroundColor: '#FF6347',
+    backgroundColor: '#333',
     paddingTop: 40,
     paddingBottom: 10,
     paddingHorizontal: 20,
@@ -198,13 +198,13 @@ const styles = StyleSheet.create({
   },
   scrollContainer: {
     flex: 1,
-    backgroundColor: '#F5F5F5',
+    backgroundColor: '#1c1c1c',
   },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#FFF',
+    backgroundColor: '#1c1c1c',
   },
   imageContainer: {
     alignItems: 'center',
@@ -223,7 +223,7 @@ const styles = StyleSheet.create({
   },
   detailsContainer: {
     padding: 20,
-    backgroundColor: '#FFF',
+    backgroundColor: '#2a2a2a',
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     elevation: 3,
@@ -244,11 +244,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 10,
-    backgroundColor: '#FFF',
+    backgroundColor: '#333',
     padding: 10,
     borderRadius: 10,
     borderWidth: 1,
-    borderColor: '#ECECEC',
+    borderColor: '#444',
     elevation: 1,
   },
   ingredientBullet: {
@@ -260,14 +260,14 @@ const styles = StyleSheet.create({
   },
   ingredientText: {
     fontSize: 16,
-    color: '#333',
+    color: '#FFF',
   },
   instructionsContainer: {
     padding: 16,
-    backgroundColor: '#FFF',
+    backgroundColor: '#2a2a2a',
     borderRadius: 10,
     borderWidth: 1,
-    borderColor: '#ECECEC',
+    borderColor: '#444',
     elevation: 1,
   },
   instruction: {
@@ -276,10 +276,10 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     paddingVertical: 10,
     paddingHorizontal: 15,
-    backgroundColor: '#FAFAFA',
+    backgroundColor: '#333',
     borderRadius: 10,
     borderWidth: 1,
-    borderColor: '#ECECEC',
+    borderColor: '#444',
     elevation: 1,
   },
   stepCircle: {
@@ -298,7 +298,7 @@ const styles = StyleSheet.create({
   },
   instructionText: {
     fontSize: 16,
-    color: '#333',
+    color: '#FFF',
     flex: 1,
   },
   fab: {
@@ -316,7 +316,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     right: 20,
     bottom: 100,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    backgroundColor: 'rgba(0, 0, 0, 0.7)',
     borderRadius: 30,
     padding: 10,
     justifyContent: 'center',

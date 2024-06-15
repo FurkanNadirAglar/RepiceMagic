@@ -10,8 +10,8 @@ import {
   TouchableOpacity,
   KeyboardAvoidingView,
   Platform,
-  Animated,
 } from "react-native";
+import { LinearGradient } from 'expo-linear-gradient';
 import * as Speech from "expo-speech";
 import { FontAwesome } from "@expo/vector-icons";
 import { Entypo } from "@expo/vector-icons";
@@ -36,7 +36,7 @@ const GeminiChat = () => {
       const text = response.text();
       console.log(text);
       showMessage({
-        message: "Welcome to Gemini Chat 🤖",
+        message: "Ask Me for Magic Recipes 🤖",
         description: text,
         type: "info",
         icon: "info",
@@ -62,7 +62,7 @@ const GeminiChat = () => {
   const sendMessage = async () => {
     setLoading(true);
     const userMessage = { text: userInput, user: true };
-    setMessages([...messages, userMessage]);
+    setMessages([userMessage, ...messages]); // Add user message to the beginning
 
     const genAI = new GoogleGenerativeAI.GoogleGenerativeAI(API_KEY);
     const model = genAI.getGenerativeModel({ model: "gemini-pro" });
@@ -70,7 +70,7 @@ const GeminiChat = () => {
     const result = await model.generateContent(prompt);
     const response = result.response;
     const text = response.text();
-    setMessages([...messages, { text, user: false }]);
+    setMessages([{ text, user: false }, ...messages]); // Add bot message to the beginning
     setLoading(false);
     setUserInput("");
 
@@ -97,7 +97,7 @@ const GeminiChat = () => {
       setIsSpeaking(false);
       setShowStopIcon(false);
     } else if (messages.length > 0) {
-      const lastMessage = messages[messages.length - 1].text;
+      const lastMessage = messages[0].text;
       Speech.speak(lastMessage, {
         onDone: () => {
           setIsSpeaking(false);
@@ -132,65 +132,73 @@ const GeminiChat = () => {
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       style={styles.container}
     >
-      <View style={styles.header}>
-        <Text style={styles.headerText}>Gemini Chat</Text>
-      </View>
-      <FlatList
-        data={messages}
-        renderItem={renderMessage}
-        keyExtractor={(item, index) => index.toString()}
-        inverted
-        contentContainerStyle={styles.messagesContainer}
-      />
-      <View style={styles.inputContainer}>
-        <TouchableOpacity style={styles.micIcon} onPress={toggleSpeech}>
-          {isSpeaking ? (
-            <FontAwesome name="microphone-slash" size={24} color="white" />
-          ) : (
-            <FontAwesome name="microphone" size={24} color="white" />
-          )}
-        </TouchableOpacity>
-        <TextInput
-          placeholder="Type a message"
-          onChangeText={setUserInput}
-          value={userInput}
-          onSubmitEditing={sendMessage}
-          style={styles.input}
-          placeholderTextColor="#fff"
+      <LinearGradient colors={['#1a2a6c', '#b21f1f', '#fdbb2d']} style={styles.gradient}>
+        <View style={styles.header}>
+          <Text style={styles.headerText}>Magic Chat</Text>
+        </View>
+        <FlatList
+          data={messages}
+          renderItem={renderMessage}
+          keyExtractor={(item, index) => index.toString()}
+          inverted // Ensure new messages appear at the top
+          contentContainerStyle={styles.messagesContainer}
         />
-        <TouchableOpacity style={styles.sendIcon} onPress={sendMessage}>
-          <Entypo name="paper-plane" size={24} color="white" />
-        </TouchableOpacity>
-        {
-          // Show stop icon only when speaking
-          showStopIcon && (
-            <TouchableOpacity style={styles.stopIcon} onPress={clearMessages}>
-              <Entypo name="controller-stop" size={24} color="white" />
-            </TouchableOpacity>
-          )
-        }
-        {loading && <ActivityIndicator size="large" color="#fff" style={styles.loadingIndicator} />}
-      </View>
-      <FlashMessage position="top" />
+        <View style={styles.inputContainer}>
+          <TouchableOpacity style={styles.micIcon} onPress={toggleSpeech}>
+            {isSpeaking ? (
+              <FontAwesome name="microphone-slash" size={24} color="white" />
+            ) : (
+              <FontAwesome name="microphone" size={24} color="white" />
+            )}
+          </TouchableOpacity>
+          <TextInput
+            placeholder="Type a message"
+            onChangeText={setUserInput}
+            value={userInput}
+            onSubmitEditing={sendMessage}
+            style={styles.input}
+            placeholderTextColor="#fff"
+          />
+          <TouchableOpacity style={styles.sendIcon} onPress={sendMessage}>
+            <Entypo name="paper-plane" size={24} color="white" />
+          </TouchableOpacity>
+          {
+            // Show stop icon only when speaking
+            showStopIcon && (
+              <TouchableOpacity style={styles.stopIcon} onPress={clearMessages}>
+                <Entypo name="controller-stop" size={24} color="white" />
+              </TouchableOpacity>
+            )
+          }
+          {loading && <ActivityIndicator size="large" color="#fff" style={styles.loadingIndicator} />}
+        </View>
+        <FlashMessage position="top" />
+      </LinearGradient>
     </KeyboardAvoidingView>
   );
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#1a1a1a", paddingTop: 40 },
+  container: { flex: 1 },
+  gradient: { flex: 1 },
   header: {
     padding: 15,
-    backgroundColor: "#333",
+    backgroundColor: "rgba(0,0,0,0.5)",
     borderBottomWidth: 1,
     borderBottomColor: "#444",
   },
-  headerText: { color: "#fff", fontSize: 18, textAlign: "center" },
+  headerText: { color: "#fff", fontSize: 24, textAlign: "center", fontWeight: 'bold' },
   messagesContainer: { padding: 10, paddingBottom: 80 },
   messageContainer: {
     padding: 10,
-    borderRadius: 10,
+    borderRadius: 20,
     marginVertical: 5,
     maxWidth: "80%",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.8,
+    shadowRadius: 2,
+    elevation: 1,
   },
   userMessageContainer: { alignSelf: "flex-end", backgroundColor: "#4a90e2" },
   botMessageContainer: { alignSelf: "flex-start", backgroundColor: "#666" },
@@ -199,7 +207,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     padding: 10,
-    backgroundColor: "#333",
+    backgroundColor: "rgba(0,0,0,0.5)",
     borderTopWidth: 1,
     borderTopColor: "#444",
     position: "absolute",
@@ -223,6 +231,11 @@ const styles = StyleSheet.create({
     width: 50,
     justifyContent: "center",
     alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.8,
+    shadowRadius: 2,
+    elevation: 1,
   },
   sendIcon: {
     padding: 10,
@@ -232,6 +245,11 @@ const styles = StyleSheet.create({
     width: 50,
     justifyContent: "center",
     alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.8,
+    shadowRadius: 2,
+    elevation: 1,
   },
   stopIcon: {
     padding: 10,
