@@ -1,14 +1,18 @@
 import React, { useState } from 'react';
 import { View, Text, ScrollView, TextInput, Button, TouchableOpacity, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useAuth } from '../../context/UserContext';
 
-const CommentsScreen = ({ navigation }) => {
-  const [comments, setComments] = useState([]);
+const CommentsScreen = ({ navigation, route }) => {
+  const { idMeal } = route.params;
+  const { username, comments, addComment } = useAuth();
   const [newComment, setNewComment] = useState('');
 
   const handleAddComment = () => {
-    setComments([...comments, newComment]);
-    setNewComment('');
+    if (newComment.trim() !== '') {
+      addComment(idMeal, { user: username, text: newComment });
+      setNewComment('');
+    }
   };
 
   return (
@@ -18,9 +22,10 @@ const CommentsScreen = ({ navigation }) => {
       </TouchableOpacity>
       <Text style={styles.modalTitle}>Comments</Text>
       <ScrollView style={styles.commentsContainer}>
-        {comments.map((comment, index) => (
+        {comments[idMeal] && comments[idMeal].map((comment, index) => (
           <View key={index} style={styles.comment}>
-            <Text style={styles.commentText}>{comment}</Text>
+            <Text style={styles.commentUser}>{comment.user}:</Text>
+            <Text style={styles.commentText}>{comment.text}</Text>
           </View>
         ))}
       </ScrollView>
@@ -62,6 +67,11 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#ECECEC',
     marginBottom: 10,
+  },
+  commentUser: {
+    fontWeight: 'bold',
+    color: '#FF6347',
+    marginRight: 5,
   },
   commentText: {
     fontSize: 16,

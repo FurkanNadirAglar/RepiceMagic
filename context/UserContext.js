@@ -1,12 +1,82 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [username, setUsername] = useState('');
+  const [username, setUsername] = useState(null);
+  const [favorites, setFavorites] = useState([]);
+  const [comments, setComments] = useState({});
+
+  useEffect(() => {
+    const loadFavorites = async () => {
+      if (username) {
+        try {
+          const storedFavorites = await AsyncStorage.getItem(`favorites_${username}`);
+          if (storedFavorites) {
+            setFavorites(JSON.parse(storedFavorites));
+          }
+        } catch (error) {
+          console.error('Error loading favorites: ', error);
+        }
+      }
+    };
+
+    loadFavorites();
+  }, [username]);
+
+  useEffect(() => {
+    const loadComments = async () => {
+      try {
+        const storedComments = await AsyncStorage.getItem('comments');
+        if (storedComments) {
+          setComments(JSON.parse(storedComments));
+        }
+      } catch (error) {
+        console.error('Error loading comments: ', error);
+      }
+    };
+
+    loadComments();
+  }, []);
+
+  const login = (username) => {
+    setUsername(username);
+  };
+
+  const logout = () => {
+    setUsername(null);
+    setFavorites([]);
+  };
+
+  const toggleFavorite = async (recipe) => {
+    try {
+      let updatedFavorites;
+      if (favorites.some(item => item.idMeal === recipe.idMeal)) {
+        updatedFavorites = favorites.filter(item => item.idMeal !== recipe.idMeal);
+      } else {
+        updatedFavorites = [...favorites, recipe];
+      }
+
+      setFavorites(updatedFavorites);
+      await AsyncStorage.setItem(`favorites_${username}`, JSON.stringify(updatedFavorites));
+    } catch (error) {
+      console.error('Error toggling favorite: ', error);
+    }
+  };
+
+  const addComment = async (idMeal, comment) => {
+    try {
+      const updatedComments = { ...comments, [idMeal]: [...(comments[idMeal] || []), comment] };
+      setComments(updatedComments);
+      await AsyncStorage.setItem('comments', JSON.stringify(updatedComments));
+    } catch (error) {
+      console.error('Error adding comment: ', error);
+    }
+  };
 
   return (
-    <AuthContext.Provider value={{ username, setUsername }}>
+    <AuthContext.Provider value={{ username,setUsername, login, logout, favorites, toggleFavorite, comments, addComment }}>
       {children}
     </AuthContext.Provider>
   );

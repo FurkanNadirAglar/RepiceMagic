@@ -3,13 +3,13 @@ import { View, Text, Image, StyleSheet, ActivityIndicator, TouchableOpacity, Lin
 import { ScrollView } from 'react-native-gesture-handler';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useAuth } from '../../context/UserContext'; // Adjust the path as necessary
 
 const RecipeDetails = ({ route }) => {
   const { idMeal } = route.params;
+  const { username, favorites, toggleFavorite, comments } = useAuth();
   const [recipeDetails, setRecipeDetails] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [isFavorite, setIsFavorite] = useState(false);
   const navigation = useNavigation();
 
   useEffect(() => {
@@ -28,45 +28,7 @@ const RecipeDetails = ({ route }) => {
     fetchRecipeDetails();
   }, [idMeal]);
 
-  useEffect(() => {
-    const checkIfFavorite = async () => {
-      try {
-        const favorites = await AsyncStorage.getItem('favorites');
-        if (favorites) {
-          const parsedFavorites = JSON.parse(favorites);
-          const isFavorite = parsedFavorites.some((item) => item.idMeal === idMeal);
-          setIsFavorite(isFavorite);
-        }
-      } catch (error) {
-        console.error('Error checking if recipe is favorite: ', error);
-      }
-    };
-
-    checkIfFavorite();
-  }, [idMeal]);
-
-  const toggleFavorite = async () => {
-    try {
-      let favorites = await AsyncStorage.getItem('favorites');
-      if (!favorites) {
-        favorites = [];
-      } else {
-        favorites = JSON.parse(favorites);
-      }
-
-      if (isFavorite) {
-        favorites = favorites.filter((item) => item.idMeal !== idMeal);
-        setIsFavorite(false);
-      } else {
-        favorites.push(recipeDetails);
-        setIsFavorite(true);
-      }
-
-      await AsyncStorage.setItem('favorites', JSON.stringify(favorites));
-    } catch (error) {
-      console.error('Error toggling favorite: ', error);
-    }
-  };
+  const isFavorite = favorites.some(item => item.idMeal === idMeal);
 
   const handleWatchVideo = () => {
     if (recipeDetails.strYoutube) {
@@ -99,7 +61,7 @@ const RecipeDetails = ({ route }) => {
           <Ionicons name="arrow-back" size={24} color="#FFF" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>{recipeDetails.strMeal}</Text>
-        <TouchableOpacity style={styles.favoriteButton} onPress={toggleFavorite}>
+        <TouchableOpacity style={styles.favoriteButton} onPress={() => toggleFavorite(recipeDetails)}>
           <Ionicons name={isFavorite ? 'heart' : 'heart-outline'} size={24} color="#FFF" />
         </TouchableOpacity>
       </View>
@@ -128,6 +90,7 @@ const RecipeDetails = ({ route }) => {
               </View>
             ))}
           </View>
+         
         </View>
       </ScrollView>
       {recipeDetails.strYoutube && (
@@ -135,7 +98,7 @@ const RecipeDetails = ({ route }) => {
           <Ionicons name="play-circle-outline" size={32} color="#FFF" />
         </TouchableOpacity>
       )}
-      <TouchableOpacity style={styles.fab} onPress={() => navigation.navigate('CommentsScreen')}>
+      <TouchableOpacity style={styles.fab} onPress={() => navigation.navigate('CommentsScreen', { idMeal })}>
         <Ionicons name="chatbubble-ellipses-outline" size={24} color="#FFF" />
       </TouchableOpacity>
     </View>
@@ -301,6 +264,7 @@ const styles = StyleSheet.create({
     color: '#FFF',
     flex: 1,
   },
+
   fab: {
     position: 'absolute',
     right: 20,

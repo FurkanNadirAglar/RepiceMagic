@@ -7,7 +7,7 @@ import { useAuth } from '../../context/UserContext'; // Adjust the path as neces
 export default function Profile() {
   const navigation = useNavigation();
   const [profileImage, setProfileImage] = useState(null);
-  const { username } = useAuth(); // Access username from context
+  const { username, logout } = useAuth(); // Access username and logout function from context
 
   const user = {
     name: "John Doe",
@@ -60,6 +60,12 @@ export default function Profile() {
     outputRange: [-150, 400],
   });
 
+  const handleLogout = () => {
+    // Implement logout logic, e.g., clear user session
+    logout(); // Assuming logout function clears authentication state
+    navigation.navigate('Login'); // Navigate to Login screen after logout
+  };
+
   return (
     <ScrollView style={styles.container}>
       <View style={styles.header}>
@@ -83,9 +89,9 @@ export default function Profile() {
       <View style={styles.buttonContainer}>
         <TouchableOpacity 
           style={styles.button} 
-          onPress={() => navigation.navigate('Settings')}
+          onPress={handleLogout}
         >
-          <Text style={styles.buttonText}>Settings</Text>
+          <Text style={styles.buttonText}>Logout</Text>
         </TouchableOpacity>
       </View>
     </ScrollView>
@@ -159,7 +165,7 @@ const styles = StyleSheet.create({
     marginVertical: 20,
   },
   button: {
-    backgroundColor: '#007bff', // Accent color for buttons
+    backgroundColor: '#dc3545', // Logout button color
     paddingVertical: 15,
     paddingHorizontal: 40,
     borderRadius: 10,

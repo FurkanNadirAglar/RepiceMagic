@@ -1,103 +1,74 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, StyleSheet, TouchableOpacity, Image, TextInput, Animated, Easing } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useNavigation, useIsFocused } from '@react-navigation/native';
-import { Ionicons } from '@expo/vector-icons';
+import React, { useState } from "react";
+import {
+  View,
+  Text,
+  FlatList,
+  StyleSheet,
+  TouchableOpacity,
+  Image,
+  TextInput,
+} from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import { useAuth } from "../../context/UserContext"; 
+import { useNavigation } from '@react-navigation/native';
 
 const Favorite = () => {
-  const [favorites, setFavorites] = useState([]);
-  const [searchText, setSearchText] = useState('');
+  const { favorites, toggleFavorite } = useAuth();
+  const [filteredFavorites, setFilteredFavorites] = useState(favorites);
+  const [searchQuery, setSearchQuery] = useState("");
   const navigation = useNavigation();
-  const isFocused = useIsFocused();
 
-  useEffect(() => {
-    const fetchFavorites = async () => {
-      try {
-        const favorites = await AsyncStorage.getItem('favorites');
-        if (favorites) {
-          setFavorites(JSON.parse(favorites));
-        }
-      } catch (error) {
-        console.error('Error fetching favorites: ', error);
-      }
-    };
-
-    fetchFavorites();
-  }, [isFocused]);
-
-  const removeFromFavorites = async (itemId) => {
-    try {
-      const updatedFavorites = favorites.filter((item) => item.idMeal !== itemId);
-      setFavorites(updatedFavorites);
-      await AsyncStorage.setItem('favorites', JSON.stringify(updatedFavorites));
-    } catch (error) {
-      console.error('Error removing from favorites: ', error);
+  if (favorites.length === 0) {
+    return (
+      <View style={styles.emptyContainer}>
+        <Text style={styles.emptyText}>No favorite recipes.</Text>
+      </View>
+    );
+  }
+  const handleSearch = (query) => {
+    setSearchQuery(query);
+    if (query) {
+      const filteredData = favorites.filter((item) =>
+        item.strMeal.toLowerCase().includes(query.toLowerCase())
+      );
+      setFilteredFavorites(filteredData);
+    } else {
+      setFilteredFavorites(favorites);
     }
   };
-
-  const handlePressItem = (itemId) => {
-    navigation.navigate('RepicesDetails', { idMeal: itemId });
-  };
-
-  const renderFavoriteItem = ({ item }) => (
-    <TouchableOpacity style={styles.card} onPress={() => handlePressItem(item.idMeal)}>
-      <Image source={{ uri: item.strMealThumb }} style={styles.cardImage} />
-      <View style={styles.cardContent}>
-        <Text style={styles.cardTitle}>{item.strMeal}</Text>
-        <Text style={styles.cardCategory}>{item.strCategory}</Text>
-      </View>
-      <TouchableOpacity onPress={() => removeFromFavorites(item.idMeal)} style={styles.removeButton}>
-        <Ionicons name="trash-outline" size={24} color="#FFF" />
-      </TouchableOpacity>
-    </TouchableOpacity>
-  );
-
-  const filterFavorites = () => {
-    return favorites.filter(item => item.strMeal.toLowerCase().includes(searchText.toLowerCase()));
-  };
-
-  const animatedValue = new Animated.Value(0);
-
-  const animateEntrance = () => {
-    Animated.timing(animatedValue, {
-      toValue: 1,
-      duration: 500,
-      easing: Easing.out(Easing.exp),
-      useNativeDriver: true,
-    }).start();
-  };
-
-  useEffect(() => {
-    animateEntrance();
-  }, []);
-
-  const translateX = animatedValue.interpolate({
-    inputRange: [0, 1],
-    outputRange: [100, 0],
-  });
-
   return (
     <View style={styles.container}>
-      <Animated.View style={[styles.searchContainer, { transform: [{ translateX }] }]}>
+      <View style={styles.searchContainer}>
+        <Ionicons
+          name="search"
+          size={24}
+          color="#999"
+          style={styles.searchIcon}
+        />
         <TextInput
           style={styles.searchInput}
-          placeholder="Search favorites"
-          onChangeText={text => setSearchText(text)}
-          value={searchText}
-          placeholderTextColor="white"
+          placeholder="Search favorites..."
+          placeholderTextColor="#999"
+          value={searchQuery}
+          onChangeText={handleSearch}
         />
-        <Ionicons name="search" size={24} color="white" style={styles.searchIcon} />
-      </Animated.View>
-      {favorites.length === 0 ? (
-        <Text style={styles.emptyMessage}>No favorites yet</Text>
-      ) : (
-        <FlatList
-          data={filterFavorites()}
-          renderItem={renderFavoriteItem}
-          keyExtractor={(item) => item.idMeal}
-          contentContainerStyle={styles.flatListContent}
-        />
-      )}
+      </View>
+      <FlatList
+        data={favorites}
+        keyExtractor={(item) => item.idMeal}
+        renderItem={({ item }) => (
+          <TouchableOpacity
+            style={styles.itemContainer}
+            onPress={() => navigation.navigate('RepicesDetails', { idMeal: item.idMeal })}
+          >
+            <Image source={{ uri: item.strMealThumb }} style={styles.image} />
+            <Text style={styles.title}>{item.strMeal}</Text>
+            <TouchableOpacity onPress={() => toggleFavorite(item)} style={styles.deleteButton}>
+              <Ionicons name="trash-outline" size={24} color="#FF6347" />
+            </TouchableOpacity>
+          </TouchableOpacity>
+        )}
+      />
     </View>
   );
 };
@@ -105,70 +76,61 @@ const Favorite = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#121212',
-    padding: 20,
+    backgroundColor: "#1c1c1c",
+    padding: 10,
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#1c1c1c",
   },
   searchContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 20,
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#2a2a2a",
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+    borderRadius: 10,
+    marginBottom: 10,
+    marginTop: 20,
+  },
+  searchIcon: {
+    marginRight: 10,
   },
   searchInput: {
     flex: 1,
-    backgroundColor: '#333',
-    borderRadius: 25,
-    paddingHorizontal: 15,
-    paddingVertical: 12,
-    color: '#FFF',
-  },
-  searchIcon: {
-    marginLeft: 10,
-  },
-  card: {
-    flexDirection: 'row',
-    marginBottom: 20,
-    backgroundColor: '#333',
-    borderRadius: 10,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 5 },
-    shadowOpacity: 0.8,
-    shadowRadius: 10,
-    elevation: 5,
-  },
-  cardImage: {
-    width: 100,
-    height: 100,
-    borderTopLeftRadius: 10,
-    borderBottomLeftRadius: 10,
-  },
-  cardContent: {
-    flex: 1,
-    padding: 10,
-  },
-  cardTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#FFF',
-  },
-  cardCategory: {
+    height: 40,
+    color: "#FFF",
     fontSize: 16,
-    color: '#BBB',
   },
-  emptyMessage: {
+  emptyText: {
+    color: "#FF6347",
     fontSize: 18,
-    textAlign: 'center',
-    color: '#BBB',
-    marginTop: 20,
+    fontWeight: "bold",
   },
-  removeButton: {
-    backgroundColor: '#FF6347',
-    borderRadius: 5,
+  itemContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#2a2a2a",
     padding: 10,
-    justifyContent: 'center',
-    alignItems: 'center',
+    marginBottom: 10,
+    borderRadius: 10,
   },
-  flatListContent: {
-    paddingBottom: 20,
+  image: {
+    width: 80,
+    height: 80,
+    borderRadius: 10,
+    marginRight: 10,
+  },
+  title: {
+    color: "#FFF",
+    fontSize: 16,
+    fontWeight: "bold",
+    flex: 1,
+  },
+  deleteButton: {
+    padding: 10,
   },
 });
 
