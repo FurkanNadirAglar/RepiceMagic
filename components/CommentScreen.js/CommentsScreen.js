@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { View, Text, ScrollView, TextInput, Button, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, ScrollView, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../../context/UserContext';
 
 const CommentsScreen = ({ navigation, route }) => {
   const { idMeal } = route.params;
-  const { username, comments, addComment } = useAuth();
+  const { username, comments, addComment, editComment, deleteComment } = useAuth();
   const [newComment, setNewComment] = useState('');
 
   const handleAddComment = () => {
@@ -15,17 +15,39 @@ const CommentsScreen = ({ navigation, route }) => {
     }
   };
 
+  const handleEditComment = (commentIndex, newText) => {
+    editComment(idMeal, commentIndex, newText);
+  };
+
+  const handleDeleteComment = (commentIndex) => {
+    deleteComment(idMeal, commentIndex);
+  };
+
   return (
-    <View style={styles.modalContainer}>
+    <View style={styles.container}>
       <TouchableOpacity onPress={() => navigation.goBack()} style={styles.closeButton}>
-        <Ionicons name="close" size={24} color="#FF6347" />
+        <Ionicons name="close" size={28} color="#FF6347" />
       </TouchableOpacity>
-      <Text style={styles.modalTitle}>Comments</Text>
+      <Text style={styles.title}>Comments</Text>
       <ScrollView style={styles.commentsContainer}>
         {comments[idMeal] && comments[idMeal].map((comment, index) => (
           <View key={index} style={styles.comment}>
-            <Text style={styles.commentUser}>{comment.user}:</Text>
-            <Text style={styles.commentText}>{comment.text}</Text>
+            <View style={styles.commentHeader}>
+              <Text style={styles.commentUser}>{comment.user}</Text>
+              {comment.user === username && (
+                <TouchableOpacity onPress={() => handleDeleteComment(index)} style={styles.deleteButton}>
+                  <Ionicons name="trash-outline" size={24} color="#FF6347" />
+                </TouchableOpacity>
+              )}
+            </View>
+            <TextInput
+              style={styles.commentText}
+              value={comment.text}
+              onChangeText={(newText) => handleEditComment(index, newText)}
+              placeholder="Edit your comment..."
+              placeholderTextColor="#888"
+              multiline
+            />
           </View>
         ))}
       </ScrollView>
@@ -33,62 +55,90 @@ const CommentsScreen = ({ navigation, route }) => {
         <TextInput
           style={styles.commentInput}
           placeholder="Add a comment..."
+          placeholderTextColor="#888"
           value={newComment}
           onChangeText={setNewComment}
+          multiline
         />
-        <Button title="Post" onPress={handleAddComment} color="#FF6347" />
+        <TouchableOpacity onPress={handleAddComment} style={styles.postButton}>
+          <Text style={styles.postButtonText}>Post</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  modalContainer: {
+  container: {
     flex: 1,
     padding: 20,
-    backgroundColor: '#FFF',
+    backgroundColor: '#121212',
   },
   closeButton: {
     alignSelf: 'flex-end',
+    marginTop: 20,
   },
-  modalTitle: {
+  title: {
     fontSize: 24,
     fontWeight: 'bold',
     color: '#FF6347',
+    textAlign: 'center',
     marginBottom: 20,
   },
   commentsContainer: {
     flex: 1,
   },
   comment: {
-    padding: 10,
-    backgroundColor: '#F9F9F9',
-    borderRadius: 5,
-    borderWidth: 1,
-    borderColor: '#ECECEC',
-    marginBottom: 10,
+    marginBottom: 15,
+  },
+  commentHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 5,
   },
   commentUser: {
     fontWeight: 'bold',
     color: '#FF6347',
-    marginRight: 5,
+    fontSize: 16,
+  },
+  deleteButton: {
+    padding: 5,
   },
   commentText: {
     fontSize: 16,
-    color: '#333',
+    color: '#FFF',
+    borderWidth: 1,
+    borderColor: '#444',
+    borderRadius: 10,
+    padding: 10,
+    backgroundColor: '#333',
   },
   addCommentContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 10,
+    marginBottom: 10,
   },
   commentInput: {
     flex: 1,
     borderWidth: 1,
-    borderColor: '#ECECEC',
-    borderRadius: 5,
+    borderColor: '#444',
+    borderRadius: 10,
     padding: 10,
+    color: '#FFF',
+    backgroundColor: '#2A2A2A',
     marginRight: 10,
+    minHeight: 50,
+  },
+  postButton: {
+    backgroundColor: '#FF6347',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 10,
+  },
+  postButtonText: {
+    color: '#FFF',
+    fontWeight: 'bold',
   },
 });
 

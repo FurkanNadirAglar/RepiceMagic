@@ -74,9 +74,34 @@ export const AuthProvider = ({ children }) => {
       console.error('Error adding comment: ', error);
     }
   };
-
+  const editComment = async (idMeal, commentIndex, newText) => {
+    try {
+      const updatedComments = { ...comments };
+      if (updatedComments[idMeal] && updatedComments[idMeal][commentIndex]) {
+        updatedComments[idMeal][commentIndex].text = newText;
+        setComments(updatedComments);
+        await AsyncStorage.setItem('comments', JSON.stringify(updatedComments));
+      }
+    } catch (error) {
+      console.error('Error editing comment: ', error);
+    }
+  };
+  
+  const deleteComment = async (idMeal, commentIndex) => {
+    try {
+      const updatedComments = { ...comments };
+      if (updatedComments[idMeal] && updatedComments[idMeal][commentIndex]) {
+        updatedComments[idMeal].splice(commentIndex, 1); // Remove comment
+        setComments(updatedComments);
+        await AsyncStorage.setItem('comments', JSON.stringify(updatedComments));
+      }
+    } catch (error) {
+      console.error('Error deleting comment: ', error);
+    }
+  };
+  
   return (
-    <AuthContext.Provider value={{ username,setUsername, login, logout, favorites, toggleFavorite, comments, addComment }}>
+    <AuthContext.Provider value={{ username,setUsername, login, logout, favorites, toggleFavorite, comments, addComment,editComment,deleteComment }}>
       {children}
     </AuthContext.Provider>
   );
