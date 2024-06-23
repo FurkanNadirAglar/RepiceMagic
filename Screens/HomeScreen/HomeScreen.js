@@ -41,11 +41,13 @@ const HomeScreen = () => {
           source={{ uri: item.strCategoryThumb }}
           style={styles.categoryImage}
         />
-        <Text style={styles.categoryText}>{item.strCategory}</Text>
+        <Text style={[styles.categoryText, selectedCategory === item && styles.selectedCategoryText]}>
+          {item.strCategory}
+        </Text>
       </TouchableOpacity>
     );
   };
-
+  
   const handleSearch = () => {
     console.log("Search: ", searchText);
   };
@@ -83,15 +85,19 @@ const HomeScreen = () => {
           </TouchableOpacity>
         </View>
       </View>
-      <FlatList
-        data={categories}
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={styles.categoryList}
-        keyExtractor={(item) => item.idCategory}
-        renderItem={renderCategoryItem}
-      />
-      <Recipes selectedCategory={selectedCategory} />
+      <View style={styles.categoryWrapper}>
+        <FlatList
+          data={categories}
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.categoryList}
+          keyExtractor={(item) => item.idCategory}
+          renderItem={renderCategoryItem}
+        />
+      </View>
+      <View style={styles.recipesWrapper}>
+        <Recipes selectedCategory={selectedCategory} />
+      </View>
     </View>
   );
 };
@@ -159,21 +165,27 @@ const styles = StyleSheet.create({
     padding: 10,
     marginRight: 5,
   },
+  categoryWrapper: {
+    height: 140,
+    paddingRight:5,
+    paddingLeft:15
+  },
   categoryList: {
-    paddingLeft: 20,
-    paddingBottom: 20,
+    alignItems: "center",
+    
   },
   categoryContainer: {
     alignItems: "center",
     marginRight: 10,
     backgroundColor: "#333",
     borderRadius: 10,
-    padding: 10,
+    padding: 5,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 5,
     elevation: 5,
+    height: 120,
   },
   selectedCategory: {
     backgroundColor: "#FF6347",
@@ -184,9 +196,18 @@ const styles = StyleSheet.create({
     borderRadius: 35,
   },
   categoryText: {
-    marginTop: 10,
+    marginTop: 5,
     color: "#FFF",
     fontWeight: "bold",
+    textAlign: "center",
+  },
+  selectedCategoryText: {
+    color: "#000",
+  },
+  recipesWrapper: {
+    flex: 1,
+   
+    
   },
 });
 

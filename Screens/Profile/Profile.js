@@ -1,13 +1,15 @@
-import React, { useState } from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity, ScrollView, Platform, Animated, Easing } from 'react-native';
+// screens/Profile.js
+import React, { useState, useEffect } from 'react';
+import { View, Text, Image, StyleSheet, TouchableOpacity, ScrollView, Animated, Easing, Button } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import { useAuth } from '../../context/UserContext'; // Adjust the path as necessary
 
 export default function Profile() {
   const navigation = useNavigation();
+  const route = useRoute();
   const [profileImage, setProfileImage] = useState(null);
-  const { username, logout } = useAuth(); // Access username and logout function from context
+  const { username, logout, recipes, addRecipe } = useAuth(); // Access username, logout function, recipes, and addRecipe from context
 
   const user = {
     name: "John Doe",
@@ -50,9 +52,15 @@ export default function Profile() {
     }).start(() => animateShimmer());
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     animateShimmer();
   }, []);
+
+  useEffect(() => {
+    if (route.params?.newRecipe) {
+      addRecipe(route.params.newRecipe);
+    }
+  }, [route.params?.newRecipe]);
 
   // Interpolated value for shimmer effect
   const translateX = animatedValue.interpolate({
@@ -86,6 +94,8 @@ export default function Profile() {
         <Text style={styles.infoLabel}>Address</Text>
         <Text style={styles.info}>{user.address}</Text>
       </View>
+      <Button title="Add Recipe" onPress={() => navigation.navigate('AddRecipe')} />
+      <Button title="My Recipes" onPress={() => navigation.navigate('MyRecipes')} />
       <View style={styles.buttonContainer}>
         <TouchableOpacity 
           style={styles.button} 

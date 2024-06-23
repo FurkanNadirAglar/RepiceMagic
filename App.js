@@ -15,6 +15,8 @@ import ChatBot from "./Screens/ChatBot/ChatBot";
 import { MaterialIcons } from '@expo/vector-icons';
 import CommentsScreen from "./components/CommentScreen.js/CommentsScreen";
 import { AuthProvider } from './context/UserContext';
+import AddRecipe from "./components/AddRecipe/AddRecipe";
+import MyRecipes from "./components/MyRecipes/MyRecipes";
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -169,6 +171,16 @@ const HomeStack = () => {
         component={CommentsScreen}
         options={{ headerShown: false }}
       />
+      <Stack.Screen
+      name="AddRecipe"
+      component={AddRecipe}
+      options={{headerShown: false}}
+      ></Stack.Screen>
+      <Stack.Screen
+      name="MyRecipes"
+      component={MyRecipes}
+      options={{headerShown: false}}
+      ></Stack.Screen>
     </Stack.Navigator>
   );
 };

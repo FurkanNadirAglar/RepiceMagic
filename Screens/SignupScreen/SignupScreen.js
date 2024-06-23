@@ -51,7 +51,7 @@ const SignupScreen = () => {
         phoneNumber: phoneNumber,
         email: email,
       });
-      navigation.navigate("LoginPage");
+      navigation.navigate("Login");
     } catch (error) {
       console.error("Sign Up error:", error.message);
     }
