@@ -13,7 +13,7 @@ import {
   Modal,
   ScrollView,
 } from "react-native";
-import { LinearGradient } from 'expo-linear-gradient';
+import { LinearGradient } from "expo-linear-gradient";
 import * as Speech from "expo-speech";
 import { FontAwesome } from "@expo/vector-icons";
 import { Entypo } from "@expo/vector-icons";
@@ -26,6 +26,7 @@ const GeminiChat = () => {
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [showStopIcon, setShowStopIcon] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
+  const backgroundImage = require("../../assets/chatbotBackground.jpg"); // Buradaki path, kendi projenizdeki dosya yoluna göre güncellenmeli
 
   const API_KEY = "AIzaSyCOi3C0XgCRXBVOsq3J8DuVtYCJsFFbyvw";
 
@@ -36,7 +37,7 @@ const GeminiChat = () => {
       const prompt = "hello! ";
       const result = await model.generateContent(prompt);
       const response = result.response;
-      const text = response.text().replace(/\*\*/g, ''); // Clean the text
+      const text = response.text().replace(/\*\*/g, ""); // Clean the text
       console.log(text);
       showMessage({
         message: "Ask Me for Magic Recipes 🤖",
@@ -72,13 +73,14 @@ const GeminiChat = () => {
     const prompt = userMessage.text;
     const result = await model.generateContent(prompt);
     const response = result.response;
-    const text = response.text().replace(/\*\*/g, ''); // Clean the text
+    const text = response.text().replace(/[*\-.,]/g, ""); // Clean the text
     setMessages([...messages, userMessage, { text, user: false }]); // Add bot message to the end
     setLoading(false);
     setUserInput("");
 
     if (text && !isSpeaking) {
       Speech.speak(text, {
+        language: "tr",
         onDone: () => {
           setIsSpeaking(false);
           setShowStopIcon(false);
@@ -100,7 +102,10 @@ const GeminiChat = () => {
       setIsSpeaking(false);
       setShowStopIcon(false);
     } else if (messages.length > 0) {
-      const lastMessage = messages[messages.length - 1].text;
+      const lastMessage = messages[messages.length - 1].text.replace(
+        /[*\-.,]/g,
+        ""
+      ); // Clean the text
       Speech.speak(lastMessage, {
         onDone: () => {
           setIsSpeaking(false);
@@ -123,7 +128,12 @@ const GeminiChat = () => {
   };
 
   const renderMessage = ({ item }) => (
-    <View style={[styles.messageContainer, item.user ? styles.userMessageContainer : styles.botMessageContainer]}>
+    <View
+      style={[
+        styles.messageContainer,
+        item.user ? styles.userMessageContainer : styles.botMessageContainer,
+      ]}
+    >
       <Text style={[styles.messageText, item.user && styles.userMessage]}>
         {item.text}
       </Text>
@@ -133,11 +143,18 @@ const GeminiChat = () => {
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
+      keyboardVerticalOffset={Platform.OS === "ios" ? 60 : 45}
       style={styles.container}
     >
-      <LinearGradient colors={['#1a2a6c', '#b21f1f', '#fdbb2d']} style={styles.gradient}>
+      <LinearGradient
+        colors={["#0a0a0a", "#141414", "#1e1e1e"]}
+        style={styles.gradient}
+      >
         <View style={styles.header}>
-          <TouchableOpacity onPress={() => setShowHistory(true)} style={styles.historyButton}>
+          <TouchableOpacity
+            onPress={() => setShowHistory(true)}
+            style={styles.historyButton}
+          >
             <Text style={styles.historyButtonText}>History</Text>
           </TouchableOpacity>
           <Text style={styles.headerText}>Magic Chat</Text>
@@ -171,15 +188,21 @@ const GeminiChat = () => {
             // Show stop icon only when speaking
             showStopIcon && (
               <TouchableOpacity style={styles.stopIcon} onPress={clearMessages}>
-                <Entypo name="controller-stop" size={24} color="white" />
+                <Entypo name="controller-paus" size={24} color="white" />
               </TouchableOpacity>
             )
           }
-          {loading && <ActivityIndicator size="large" color="#fff" style={styles.loadingIndicator} />}
+          {loading && (
+            <ActivityIndicator
+              size="large"
+              color="#fff"
+              style={styles.loadingIndicator}
+            />
+          )}
         </View>
         <FlashMessage position="top" />
       </LinearGradient>
-      
+
       {/* Modal for displaying message history */}
       <Modal
         visible={showHistory}
@@ -188,15 +211,33 @@ const GeminiChat = () => {
       >
         <View style={styles.modalContainer}>
           <ScrollView contentContainerStyle={styles.scrollViewContent}>
-            {messages.map((msg, index) => (
-              <View key={index} style={[styles.messageContainer, msg.user ? styles.userMessageContainer : styles.botMessageContainer]}>
-                <Text style={[styles.messageText, msg.user && styles.userMessage]}>
-                  {msg.text}
-                </Text>
-              </View>
-            ))}
+            <View>
+              {messages.map((msg, index) => (
+                <View
+                  key={index}
+                  style={[
+                    styles.messageContainer,
+                    msg.user
+                      ? styles.userMessageContainer
+                      : styles.botMessageContainer,
+                  ]}
+                >
+                  <Text
+                    style={[
+                      styles.messageText,
+                      msg.user ? styles.userMessage : styles.botMessageText,
+                    ]}
+                  >
+                    {msg.text}
+                  </Text>
+                </View>
+              ))}
+            </View>
           </ScrollView>
-          <TouchableOpacity style={styles.closeButton} onPress={() => setShowHistory(false)}>
+          <TouchableOpacity
+            style={styles.closeButton}
+            onPress={() => setShowHistory(false)}
+          >
             <Text style={styles.closeButtonText}>Close</Text>
           </TouchableOpacity>
         </View>
@@ -206,66 +247,121 @@ const GeminiChat = () => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1 },
-  gradient: { flex: 1 },
+  container: {
+    flex: 1,
+    backgroundColor: "#1a1a2e",
+  },
+  gradient: {
+    flex: 1,
+  },
   header: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    padding: 15,
-    backgroundColor: "rgba(0,0,0,0.5)",
+    padding: 20,
+    backgroundColor: "rgba(0,0,0,0.7)",
     borderBottomWidth: 1,
     borderBottomColor: "#444",
+    elevation: 5,
   },
   historyButton: {
-    padding: 10,
-    backgroundColor: "#4a90e2",
-    borderRadius: 20,
+    padding: 12,
+    backgroundColor: "#FF6347",
+    borderRadius: 25,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.8,
+    shadowRadius: 3,
+    elevation: 4,
   },
   historyButtonText: {
     color: "#fff",
     fontSize: 16,
+    fontWeight: "600",
   },
-  headerText: { color: "#fff", fontSize: 24, textAlign: "center", fontWeight: 'bold' },
-  messagesContainer: { padding: 10, paddingBottom: 80 },
   messageContainer: {
     padding: 10,
-    borderRadius: 20,
     marginVertical: 5,
+    borderRadius: 8,
+  },
+  userMessageContainer: {
+    alignSelf: "flex-end",
+    backgroundColor: "#FF6347", // Kullanıcı mesaj arka plan rengi
+  },
+  botMessageContainer: {
+    alignSelf: "flex-start",
+    backgroundColor: "#424242", // Bot mesaj arka plan rengi
+  },
+  messageText: {
+    fontSize: 16,
+    fontWeight: "400",
+    color: "#ffffff", // Varsayılan mesaj metin rengi
+  },
+  userMessage: {
+    color: "#ffffff", // Kullanıcı mesaj metin rengi (beyaz)
+  },
+  botMessageText: {
+    color: "#000000", // Bot mesaj metin rengi (siyah)
+  },
+  headerText: {
+    color: "#fff",
+    fontSize: 26,
+    textAlign: "center",
+    fontWeight: "bold",
+  },
+  messagesContainer: {
+    padding: 10,
+    paddingBottom: 100,
+  },
+  messageContainer: {
+    padding: 15,
+    borderRadius: 25,
+    marginVertical: 8,
     maxWidth: "80%",
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.8,
-    shadowRadius: 2,
-    elevation: 1,
+    shadowRadius: 3,
+    elevation: 2,
   },
-  userMessageContainer: { alignSelf: "flex-end", backgroundColor: "#4a90e2" },
-  botMessageContainer: { alignSelf: "flex-start", backgroundColor: "#666" },
-  messageText: { fontSize: 16, color: "#fff" },
+
+  botMessageContainer: {
+    alignSelf: "flex-start",
+    backgroundColor: "#f1f1f1",
+  },
+  messageText: {
+    fontSize: 16,
+    color: "#000",
+  },
   inputContainer: {
     flexDirection: "row",
     alignItems: "center",
-    padding: 10,
-    backgroundColor: "rgba(0,0,0,0.5)",
+    padding: 15,
+    backgroundColor: "rgba(0,0,0,0.7)",
     borderTopWidth: 1,
     borderTopColor: "#444",
     position: "absolute",
     bottom: 0,
     width: "100%",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.8,
+    shadowRadius: 3,
+    elevation: 5,
   },
   input: {
     flex: 1,
-    padding: 10,
-    backgroundColor: "#444",
-    borderRadius: 25,
+    padding: 15,
+    backgroundColor: "#333",
+    borderRadius: 30,
     height: 50,
-    color: "white",
+    color: "#fff",
     marginHorizontal: 10,
   },
   micIcon: {
-    padding: 10,
-    backgroundColor: "#444",
-    borderRadius: 25,
+    padding: 12,
+    backgroundColor: "#333",
+    borderRadius: 30,
     height: 50,
     width: 50,
     justifyContent: "center",
@@ -273,13 +369,13 @@ const styles = StyleSheet.create({
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.8,
-    shadowRadius: 2,
-    elevation: 1,
+    shadowRadius: 3,
+    elevation: 4,
   },
   sendIcon: {
-    padding: 10,
-    backgroundColor: "#4a90e2",
-    borderRadius: 25,
+    padding: 12,
+    backgroundColor: "#FF6347",
+    borderRadius: 30,
     height: 50,
     width: 50,
     justifyContent: "center",
@@ -287,40 +383,52 @@ const styles = StyleSheet.create({
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.8,
-    shadowRadius: 2,
-    elevation: 1,
+    shadowRadius: 3,
+    elevation: 4,
   },
   stopIcon: {
-    padding: 10,
+    padding: 12,
     backgroundColor: "#e74c3c",
-    borderRadius: 25,
+    borderRadius: 30,
     height: 50,
     width: 50,
     justifyContent: "center",
     alignItems: "center",
     marginLeft: 10,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.8,
+    shadowRadius: 3,
+    elevation: 4,
   },
   loadingIndicator: {
     marginLeft: 10,
   },
   modalContainer: {
     flex: 1,
-    backgroundColor: "#1a2a6c",
+    backgroundColor: "#1a1a2e",
     paddingTop: 50,
+    paddingHorizontal: 20,
   },
   scrollViewContent: {
     padding: 20,
   },
   closeButton: {
     backgroundColor: "#e74c3c",
-    padding: 10,
-    borderRadius: 20,
+    padding: 12,
+    borderRadius: 25,
     alignItems: "center",
-    margin: 20,
+    marginVertical: 20,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.8,
+    shadowRadius: 3,
+    elevation: 4,
   },
   closeButtonText: {
     color: "#fff",
     fontSize: 16,
+    fontWeight: "600",
   },
 });
 

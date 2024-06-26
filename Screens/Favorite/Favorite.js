@@ -62,7 +62,10 @@ const Favorite = () => {
             onPress={() => navigation.navigate('RepicesDetails', { idMeal: item.idMeal })}
           >
             <Image source={{ uri: item.strMealThumb }} style={styles.image} />
-            <Text style={styles.title}>{item.strMeal}</Text>
+            <View style={styles.textContainer}>
+              <Text style={styles.title}>{item.strMeal}</Text>
+              <Text style={styles.category}>{item.strCategory}</Text>
+            </View>
             <TouchableOpacity onPress={() => toggleFavorite(item)} style={styles.deleteButton}>
               <Ionicons name="trash-outline" size={24} color="#FF6347" />
             </TouchableOpacity>
@@ -89,10 +92,10 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: "#2a2a2a",
-    paddingVertical: 5,
-    paddingHorizontal: 10,
+    paddingVertical: 10,
+    paddingHorizontal: 15,
     borderRadius: 10,
-    marginBottom: 10,
+    marginBottom: 15,
     marginTop: 20,
   },
   searchIcon: {
@@ -112,22 +115,35 @@ const styles = StyleSheet.create({
   itemContainer: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#2a2a2a",
+    backgroundColor: "#333",
     padding: 10,
     marginBottom: 10,
-    borderRadius: 10,
+    borderRadius: 15,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.8,
+    shadowRadius: 2,
+    elevation: 5,
   },
   image: {
-    width: 80,
-    height: 80,
-    borderRadius: 10,
+    width: 100,
+    height: 100,
+    borderRadius: 15,
     marginRight: 10,
+  },
+  textContainer: {
+    flex: 1,
   },
   title: {
     color: "#FFF",
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: "bold",
-    flex: 1,
+    marginBottom: 5,
+  },
+  category: {
+    color: "#FFF",
+    fontSize: 14,
+    fontStyle: "italic",
   },
   deleteButton: {
     padding: 10,

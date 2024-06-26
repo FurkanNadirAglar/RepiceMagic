@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { View, ImageBackground, StyleSheet } from "react-native";
-import Onboarding from "./components/Onboarding/Onboarding"; 
+import Onboarding from "./components/Onboarding/Onboarding";
 import LoginPage from "./Screens/LoginPage/LoginPage";
 import HomeScreen from "./Screens/HomeScreen/HomeScreen";
 import Profile from "./Screens/Profile/Profile";
@@ -12,9 +12,9 @@ import SignupScreen from "./Screens/SignupScreen/SignupScreen";
 import FingerPrint from "./components/Onboarding/FingerPrint";
 import RepicesDetails from "./components/RepicesDetails.js/RepicesDetails";
 import ChatBot from "./Screens/ChatBot/ChatBot";
-import { MaterialIcons } from '@expo/vector-icons';
+import { MaterialIcons } from "@expo/vector-icons";
 import CommentsScreen from "./components/CommentScreen.js/CommentsScreen";
-import { AuthProvider } from './context/UserContext';
+import { AuthProvider } from "./context/UserContext";
 import AddRecipe from "./components/AddRecipe/AddRecipe";
 import MyRecipes from "./components/MyRecipes/MyRecipes";
 
@@ -28,7 +28,7 @@ const App = () => {
   useEffect(() => {
     const splashTimer = setTimeout(() => {
       setShowSplash(false);
-    }, 2000);
+    }, 10000);
 
     return () => clearTimeout(splashTimer);
   }, []);
@@ -39,32 +39,32 @@ const App = () => {
 
   return (
     <AuthProvider>
-    <NavigationContainer>
-      {showSplash ? (
-        <View style={styles.splashContainer}>
-          <View style={styles.circle} />
-          <ImageBackground
-            source={require("./assets/splash/LogoShapes1.png")}
-            style={styles.logoShapes1}
-          />
-        </View>
-      ) : !completed ? (
-        <Onboarding onComplete={handleComplete} />
-      ) : (
-        <Stack.Navigator>
-          <Stack.Screen
-            name="Auth"
-            component={AuthStack}
-            options={{ headerShown: false }}
-          />
-          <Stack.Screen
-            name="Home"
-            component={HomeTab}
-            options={{ headerShown: false }}
-          />
-        </Stack.Navigator>
-      )}
-    </NavigationContainer>
+      <NavigationContainer>
+        {showSplash ? (
+          <View style={styles.splashContainer}>
+            
+            <ImageBackground
+              source={require("./assets/splash/Logo1.jpg")}
+              style={styles.logoShapes1}
+            />
+          </View>
+        ) : !completed ? (
+          <Onboarding onComplete={handleComplete} />
+        ) : (
+          <Stack.Navigator>
+            <Stack.Screen
+              name="Auth"
+              component={AuthStack}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="Home"
+              component={HomeTab}
+              options={{ headerShown: false }}
+            />
+          </Stack.Navigator>
+        )}
+      </NavigationContainer>
     </AuthProvider>
   );
 };
@@ -91,40 +91,39 @@ const AuthStack = () => {
   );
 };
 
-
 const HomeTab = () => {
   return (
-    <View style={{ flex: 1, backgroundColor: 'black' }}>
+    <View style={{ flex: 1, backgroundColor: "black" }}>
       <Tab.Navigator
         screenOptions={({ route }) => ({
           tabBarIcon: ({ color }) => {
             let iconName;
 
-            if (route.name === 'Home') {
-              iconName = 'home';
-            } else if (route.name === 'Favorite') {
-              iconName = 'favorite';
-            } else if (route.name === 'ChatBot') {
-              iconName = 'android';
-            } else if (route.name === 'Profile') {
-              iconName = 'person';
+            if (route.name === "Home") {
+              iconName = "home";
+            } else if (route.name === "Favorite") {
+              iconName = "favorite";
+            } else if (route.name === "ChatBot") {
+              iconName = "android";
+            } else if (route.name === "Profile") {
+              iconName = "person";
             }
 
             return <MaterialIcons name={iconName} size={24} color={color} />;
           },
-          tabBarActiveTintColor: '#FF6347',    // Aktif sekme metin rengi
-          tabBarInactiveTintColor: '#555',     // Pasif sekme metin rengi
-          tabBarShowLabel: false, 
-                     // Sekme etiketlerini gösterme
+          tabBarActiveTintColor: "#FF6347", // Aktif sekme metin rengi
+          tabBarInactiveTintColor: "#555", // Pasif sekme metin rengi
+          tabBarShowLabel: false,
+          // Sekme etiketlerini gösterme
           tabBarStyle: {
-            backgroundColor: '#1c1c1c',        // Arka plan rengi
-            borderTopWidth: 0,                 // Üst kenar çizgisinin kalınlığı
-            elevation: 10,                     // Android için gölge yükseltme
-            shadowColor: '#000',               // Gölge rengi
-            shadowOpacity: 0.1,                // Gölge opaklığı
-            shadowRadius: 5,                   // Gölge yarıçapı
+            backgroundColor: "#1c1c1c", // Arka plan rengi
+            borderTopWidth: 0, // Üst kenar çizgisinin kalınlığı
+            elevation: 10, // Android için gölge yükseltme
+            shadowColor: "#000", // Gölge rengi
+            shadowOpacity: 0.1, // Gölge opaklığı
+            shadowRadius: 5, // Gölge yarıçapı
             shadowOffset: { width: 0, height: 2 }, // Gölge ofseti
-            borderRadius: 15,                  // Kenar yuvarlaklığı
+            borderRadius: 15, // Kenar yuvarlaklığı
           },
         })}
       >
@@ -172,19 +171,18 @@ const HomeStack = () => {
         options={{ headerShown: false }}
       />
       <Stack.Screen
-      name="AddRecipe"
-      component={AddRecipe}
-      options={{headerShown: false}}
+        name="AddRecipe"
+        component={AddRecipe}
+        options={{ headerShown: false }}
       ></Stack.Screen>
       <Stack.Screen
-      name="MyRecipes"
-      component={MyRecipes}
-      options={{headerShown: false}}
+        name="MyRecipes"
+        component={MyRecipes}
+        options={{ headerShown: false }}
       ></Stack.Screen>
     </Stack.Navigator>
   );
 };
-
 
 const styles = StyleSheet.create({
   splashContainer: {
@@ -192,13 +190,14 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  logoShapes1: {
-    width: 130,
-    height: 110,
-    position: "absolute",
-    zIndex: 1,
-    bottom: "44%",
-  },
+ logoShapes1: {
+  width: '100%',      // Cover entire width of the screen
+  height: '100%',     // Cover entire height of the screen
+  position: 'absolute',
+  zIndex: 1,
+  top: 0,
+  left: 0,
+},
   circle: {
     width: 180,
     height: 180,
